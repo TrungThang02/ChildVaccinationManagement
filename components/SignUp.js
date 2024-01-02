@@ -1,4 +1,4 @@
-import { View, Text, Image, Pressable, TextInput, TouchableOpacity,SafeAreaProvider} from 'react-native'
+import { View, Text, Image, Pressable, TextInput, TouchableOpacity,SafeAreaProvider, Alert} from 'react-native'
 import React, { useState } from 'react'
 import { SafeAreaView } from "react-native-safe-area-context";
 import COLORS from '../constants/colors';
@@ -6,14 +6,47 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import Checkbox from "expo-checkbox"
 import Button from '../components/Button';
 
+import auth from '@react-native-firebase/auth';
+import { useNavigation } from '@react-navigation/native';
+import firestore from '@react-native-firebase/firestore';
+
 const SignUp = ({ navigation }) => {
-    const [isPasswordShown, setIsPasswordShown] = useState(false);
+    const [email, setEmail] = useState('');
+    const [pass, setPass] = useState('');
+    const [passrp, setPassrp] = useState('');
+    const [phone, setPhone] = useState('');
+    const [isPasswordShown, setIsPasswordShown] = useState(true);
     const [isChecked, setIsChecked] = useState(false);
+
+    const handleSignUp = async () => {
+        if (pass === passrp) {
+            try {
+              const { user } = await auth().createUserWithEmailAndPassword(email, pass);
+              await firestore().collection('users').doc(user.email).set({
+                email: user.email,
+                childname:'',
+                address:'abc',
+                date:'',
+                phone:phone
+               
+              });
+              Alert.alert('Thông báo', 'Đăng ký thành công!');
+              navigation.navigate("Login");
+      
+              
+            } catch (error) {
+                Alert.alert('Thông báo', 'Vui lòng kiểm tra lại thông tin!');
+            }
+          } else {
+          //   Alert.alert('Error', 'Passwords do not match');
+          }
+        };
+
     return (
         // <SafeAreaProvider>
         <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.white }}>
             <View style={{ flex: 1, marginHorizontal: 22 }}>
-                <View style={{ marginVertical: 22 }}>
+                <View>
                     <Text style={{
                         fontSize: 22,
                         fontWeight: 'bold',
@@ -22,11 +55,6 @@ const SignUp = ({ navigation }) => {
                     }}>
                         Tạo tài khoản
                     </Text>
-
-                    {/* <Text style={{
-                        fontSize: 16,
-                        color: COLORS.black
-                    }}>Connect with your friend today!</Text> */}
                 </View>
 
                 <View style={{ marginBottom: 12 }}>
@@ -50,6 +78,8 @@ const SignUp = ({ navigation }) => {
                             placeholder='Nhập địa chỉ email'
                             placeholderTextColor={COLORS.black}
                             keyboardType='email-address'
+                            value={email}
+                            onChangeText={email => setEmail(email)}
                             style={{
                                 width: "100%"
                             }}
@@ -76,21 +106,11 @@ const SignUp = ({ navigation }) => {
                         paddingLeft: 22
                     }}>
                         <TextInput
-                            placeholder='+84'
+                            placeholder='Nhập số điện thoại (84xxx)'
                             placeholderTextColor={COLORS.black}
                             keyboardType='numeric'
-                            style={{
-                                width: "12%",
-                                borderRightWidth: 1,
-                                borderLeftColor: COLORS.grey,
-                                height: "100%"
-                            }}
-                        />
-
-                        <TextInput
-                            placeholder='Nhập số điện thoại'
-                            placeholderTextColor={COLORS.black}
-                            keyboardType='numeric'
+                            value={phone}
+                            onChangeText={phone => setPhone(phone)}
                             style={{
                                 width: "80%"
                             }}
@@ -118,6 +138,8 @@ const SignUp = ({ navigation }) => {
                         <TextInput
                             placeholder='Nhập mật khẩu'
                             placeholderTextColor={COLORS.black}
+                            value={pass}
+                            onChangeText={pass => setPass(pass)}
                             secureTextEntry={isPasswordShown}
                             style={{
                                 width: "100%"
@@ -144,6 +166,54 @@ const SignUp = ({ navigation }) => {
                     
                 </View>
 
+                <View style={{ marginBottom: 12 }}>
+                    <Text style={{
+                        fontSize: 16,
+                        fontWeight: 400,
+                        marginVertical: 8
+                    }}>Mật khẩu</Text>
+
+                    <View style={{
+                        width: "100%",
+                        height: 48,
+                        borderColor: COLORS.black,
+                        borderWidth: 1,
+                        borderRadius: 8,
+                        alignItems: "center",
+                        justifyContent: "center",
+                        paddingLeft: 22
+                    }}>
+                        <TextInput
+                            placeholder='Nhập lại mật khẩu'
+                            placeholderTextColor={COLORS.black}
+                            value={passrp}
+                            onChangeText={pass => setPassrp(pass)}
+                            secureTextEntry={isPasswordShown}
+                            style={{
+                                width: "100%"
+                            }}
+                        />
+
+                        <TouchableOpacity
+                            onPress={() => setIsPasswordShown(!isPasswordShown)}
+                            style={{
+                                position: "absolute",
+                                right: 12
+                            }}
+                        >
+                            {
+                                isPasswordShown == true ? (
+                                    <Icon name="eye-off" size={24} color={COLORS.black} />
+                                ) : (
+                                    <Icon name="eye" size={24} color={COLORS.black} />
+                                )
+                            }
+
+                        </TouchableOpacity>
+                    </View>
+                    
+                </View>
+{/* 
                 <View style={{
                     flexDirection: 'row',
                     marginVertical: 6
@@ -156,9 +226,10 @@ const SignUp = ({ navigation }) => {
                     />
 
                     <Text>Đồng ý với điều khoản !</Text>
-                </View>
+                </View> */}
 
                 <Button
+                    onPress={handleSignUp}
                     title="Đăng ký"
                     filled
                     style={{

@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "1065332602297",
+    "firebase_url": "https://childvaccinationmanageme-f8806-default-rtdb.firebaseio.com",
+    "project_id": "childvaccinationmanageme-f8806",
+    "storage_bucket": "childvaccinationmanageme-f8806.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1065332602297:android:8ad609578a60db503e7268",
+        "android_client_info": {
+          "package_name": "com.childvaccinationmanagement"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDuuxkWP3f0qELr-IWCkrXSbMB2X9bMkjU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

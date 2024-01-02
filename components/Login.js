@@ -1,16 +1,28 @@
-import { View, Text, Image , Pressable, TextInput, TouchableOpacity} from 'react-native'
+import { View, Text, Image , Pressable, TextInput, TouchableOpacity, Alert} from 'react-native'
 import React, { useState } from 'react'
 import { SafeAreaView } from "react-native-safe-area-context";
 import COLORS from '../constants/colors'
 import Icon from 'react-native-vector-icons/Ionicons';
 import Checkbox from "expo-checkbox"
 import Button from '../components/Button';
-
+import auth from '@react-native-firebase/auth';
 
 
 const Login = ({ navigation }) => {
-    const [isPasswordShown, setIsPasswordShown] = useState(false);
-    const [isChecked, setIsChecked] = useState(false);
+    const [email, setEmail] = useState('');
+    const [pass, setPass] = useState('');
+    const [isPasswordShown, setIsPasswordShown] = useState(true);
+    const [isChecked, setIsChecked] = useState(true);
+
+    const HandleLogin = () => {
+        if (pass != null || email != null || pass != "" || email != "") {
+           auth().signInWithEmailAndPassword(email, pass)
+            navigation.navigate("Home");
+        } else {
+            Alert.alert("", "Please enter mail or password !");
+        }
+        
+    }
     
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.white }}>
@@ -51,6 +63,8 @@ const Login = ({ navigation }) => {
                         <TextInput
                             placeholder='Nhập địa chỉ email'
                             placeholderTextColor={COLORS.black}
+                            value={email}
+                            onChangeText={email => setEmail(email)}
                             keyboardType='email-address'
                             style={{
                                 width: "100%"
@@ -77,6 +91,8 @@ const Login = ({ navigation }) => {
                         paddingLeft: 22
                     }}>
                         <TextInput
+                            value={pass}
+                            onChangeText={pass => setPass(pass)}
                             placeholder='Nhập mật khẩu'
                             placeholderTextColor={COLORS.black}
                             secureTextEntry={isPasswordShown}
@@ -119,6 +135,7 @@ const Login = ({ navigation }) => {
                 </View>
 
                 <Button
+                onPress={HandleLogin}
                     title="Đăng nhập"
                     filled
                     style={{

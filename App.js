@@ -7,9 +7,9 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { PaperProvider } from 'react-native-paper';
 import CustomNavigationBar from './navigators/CustomNavigationBar';
 
-import Welcome from './components/Welcome';
-import Login from './components/Login';
-import SignUp from './components/SignUp';
+import Router from "./navigators/Navigation";
+
+
 
 
 export default function App() {
@@ -17,7 +17,7 @@ export default function App() {
   return (
     <PaperProvider>
     <NavigationContainer>
-    <Stack.Navigator
+    {/* <Stack.Navigator
     initalRouteName ="Welcome"
     screenOptions={{
       header: (props) => <CustomNavigationBar {...props} />
@@ -25,8 +25,10 @@ export default function App() {
       <Stack.Screen name="Welcome" component={Welcome} />
       <Stack.Screen name="Login" component={Login} /> 
       <Stack.Screen name="SignUp" component={SignUp} /> 
+      <Stack.Screen name="Home" component={RouteHome} /> 
       
-    </Stack.Navigator>
+    </Stack.Navigator> */}
+    <Router/>
   </NavigationContainer>
   </PaperProvider>
   );
