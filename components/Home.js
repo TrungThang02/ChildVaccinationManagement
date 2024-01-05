@@ -15,7 +15,7 @@ const Home = () => {
       ];
     return (
         <SafeAreaView style={styles.container}>
-            <ScrollView showsVerticalScrollIndicator={false}>
+
 
                 {/* <View style={styles.container}>  */}
                 <View style={styles.header}>
@@ -27,9 +27,9 @@ const Home = () => {
                         <Text style={{ color: 'black', fontSize: 15, fontWeight: '600' }}>Tran Trung Thang !</Text>
                     </View>
                 </View>
-                {/* </View> */}
-
+                <ScrollView showsVerticalScrollIndicator={false}>
                 <View>
+    
                     <View style={styles.banner}>
                         <TouchableOpacity style={{ ...styles.control, backgroundColor: '#A8DF8E' }} onPress={()=> alert("Bấm vào")}>
                             <View style={styles.imagebanner}>
