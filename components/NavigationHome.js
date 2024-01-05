@@ -79,7 +79,7 @@ const RouteHome = () => {
                   style={{
                     alignItems: "center",
                     justifyContent: "center",
-                    backgroundColor: "#16247d",
+                    backgroundColor: "#87A7FF",
                     width: Platform.OS == "ios" ? 50 : 60,
                     height: Platform.OS == "ios" ? 50 : 60,
                     top: Platform.OS == "ios" ? -10 : -20,

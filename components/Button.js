@@ -23,7 +23,7 @@ const Button = (props) => {
 }
 
 const styles = StyleSheet.create({
-    Button: {
+    button: {
         paddingBottom: 16,
         paddingVertical: 10,
         borderColor: COLORS.primary,

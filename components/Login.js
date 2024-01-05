@@ -12,17 +12,29 @@ const Login = ({ navigation }) => {
     const [email, setEmail] = useState('');
     const [pass, setPass] = useState('');
     const [isPasswordShown, setIsPasswordShown] = useState(true);
-    const [isChecked, setIsChecked] = useState(true);
+    const [isChecked, setIsChecked] = useState(false);
 
     const HandleLogin = () => {
-        if (pass != null || email != null || pass != "" || email != "") {
-           auth().signInWithEmailAndPassword(email, pass)
-            navigation.navigate("Home");
+        if (pass === '' || email === '') {
+            Alert.alert('Lỗi', 'Vui lòng kiểm tra email hoặc mật khẩu!');
         } else {
-            Alert.alert("", "Please enter mail or password !");
+            auth()
+                .signInWithEmailAndPassword(email, pass)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+                    console.log(user.email)
+                    navigation.navigate('RouteHome');
+                })
+                .catch((error) => {
+                    if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+                        Alert.alert('Lỗi', 'Vui lòng kiểm tra email hoặc mật khẩu!');
+                    } else {
+                        Alert.alert('Lỗi', 'Thông tin đăng nhập không đúng!');
+                        //console.error(error);
+                    }
+                });
         }
-        
-    }
+    };
     
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.white }}>

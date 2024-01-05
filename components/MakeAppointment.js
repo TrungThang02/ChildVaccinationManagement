@@ -18,6 +18,16 @@ const DATA = [
         name: 'Phong Kham Da Khoa',
         title: 'Vinh Long',
     },
+    {
+        id: '58694a0f-3da1-471f-bd96-145571e29d7t2',
+        name: 'Phong Kham Da Khoa',
+        title: 'Vinh Long',
+    },
+    {
+        id: '58694a0f-3da1-471f-bd96-145571e29d2',
+        name: 'Phong Kham Da Khoa',
+        title: 'Vinh Long',
+    },
 ];
 
 const Item = ({ title, name }) => (
@@ -32,7 +42,7 @@ const Item = ({ title, name }) => (
                 <Text style={styles.buttonText}>Xem chi tiết</Text>
             </TouchableOpacity>
             <TouchableOpacity
-                style={[styles.button, { backgroundColor: '#16247d' }]}
+                style={[styles.button, { backgroundColor: '#87A7FF' }]}
             >
                 <Text style={[styles.buttonText, { color: 'white' }]}>Đặt lịch</Text>
             </TouchableOpacity>
@@ -47,23 +57,25 @@ const MakeAppointment = () => {
 
     return (
         <View style={{ backgroundColor: '#fff', flex: 1 }}>
-            <View style={{ padding: 10, alignItems: 'center' }}>
-                <Text style={{ fontFamily: 'Arial', fontSize: 20, fontWeight: '600' }}>Chọn cơ sở tiêm chủng</Text>
+             <View style={{ padding: 10, alignItems: 'center', backgroundColor:'#87A7FF'}}>
+                <Text style={{ fontFamily: 'Arial', fontSize: 18, fontWeight: '600', fontWeight:'bold', color:'#fff'}}>ĐẶT LỊCH TIÊM</Text>
             </View>
+           
             <View style={styles.search}>
                 <Searchbar
                     style={{backgroundColor:'transparent',
-                            borderColor:'#16247d',
+                            borderColor:'#87A7FF',
                             borderWidth:1,
                             borderRadius:10
                         }}
-                    placeholder="Tìm kiếm..."
+                    placeholder="Tìm kiếm địa điểm..."
                     onChangeText={onChangeSearch}
                     value={searchQuery}
                 />
             </View>
-            <SafeAreaView style={styles.container}>
+            <SafeAreaView>
                 <FlatList
+                style={{marginBottom:200}}
                     data={DATA}
                     renderItem={({ item }) => (
                         <Item title={item.title} name={item.name} />
@@ -75,17 +87,6 @@ const MakeAppointment = () => {
     );
 }
 
-const App = () => {
-    return (
-        <View style={{ flex: 1 }}>
-            <Appbar.Header>
-                <Appbar.Content
-                    title="Đặt lịch tiêm" />
-            </Appbar.Header>
-            <MakeAppointment />
-        </View>
-    );
-}
 
 const styles = StyleSheet.create({
     container: {
@@ -96,9 +97,14 @@ const styles = StyleSheet.create({
         padding: 20,
         marginVertical: 8,
         marginHorizontal: 16,
-        borderColor: '#333',
-        borderWidth: 1,
         borderRadius: 10,
+        elevation: 3,
+        shadowOffset: {width: -2, height: 4},  
+        shadowColor: 'black',  
+        shadowOpacity: 0.2,  
+        shadowRadius: 5,  
+      
+
     },
     title: {
         fontSize: 16,
@@ -120,7 +126,7 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         width: '45%',
         borderWidth: 1,
-        borderColor: '#16247d',
+        borderColor: '#87A7FF',
         alignItems: 'center',
     },
     buttonText: {
@@ -128,8 +134,8 @@ const styles = StyleSheet.create({
     },
     search:{
         padding:15,
-        paddingBottom:10,
+        paddingBottom:5,
     }
 });
 
-export default App;
+export default MakeAppointment;

@@ -13,10 +13,10 @@ const Stack = createStackNavigator();
 const Router = ({ navigation }) => {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="RouteHome" component={RouteHome} options={{ headerShown: false }} />
+     
       <Stack.Screen name="Welcome" component={Welcome} options={{ headerShown: false }} />
       <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
-
+      <Stack.Screen name="RouteHome" component={RouteHome} options={{ headerShown: false }} />
       <Stack.Screen name="SignUp" component={SignUp} options={{ headerShown: false }} />
 
       
