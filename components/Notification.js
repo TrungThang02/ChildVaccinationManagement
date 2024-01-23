@@ -1,12 +1,17 @@
 import React from 'react';
 import {View, StyleSheet} from 'react-native';
 import { Text } from 'react-native-paper';
+import { Appbar } from 'react-native-paper';
 
 const Notification = () => {
     return (
-        <View style={styles.container}>
+        <View>
+
+  <View style={styles.container}>
             <Text>Đây là trang thông báo</Text>
         </View>
+  </View>
+        
     );
 }
 

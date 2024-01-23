@@ -6,13 +6,17 @@ import { Avatar, Card } from 'react-native-paper';
 
 
 
-const Home = () => {
+const Home = ({navigation}) => {
     const data = [
         { id: '1', title: 'Card 1', content: 'Hãy đảm bảo bạn không lồng ghép một NavigationContainer hoặc điều hướng trong một điều hướng khác hoặc thành phần Screen. Cấu trúc điều hướng của bạn nên được tổ chức với một NavigationContainer ở mức cao nhất,' },
         { id: '2', title: 'Card 2', content: 'Content of Card 2' },
         { id: '3', title: 'Card 3', content: 'Content of Card 3' },
         // Add more data as needed
       ];
+
+      const handlerAlert = () =>{
+        navigation.navigate("Notification")
+      }
     return (
         <SafeAreaView style={styles.container}>
 
@@ -25,6 +29,11 @@ const Home = () => {
                     <View style={{ marginLeft: 10 }}>
                         <Text style={{ color: 'black' }}>Xin chào</Text>
                         <Text style={{ color: 'black', fontSize: 15, fontWeight: '600' }}>Tran Trung Thang !</Text>
+                    </View>
+                    <View style={{alignItems:'flex-end', width:175}}>
+                    <TouchableOpacity onPress={handlerAlert}>
+                        <Image source={{ uri: 'https://static.vecteezy.com/system/resources/previews/010/366/210/original/bell-icon-transparent-notification-free-png.png' }} height={45} width={45} />
+                    </TouchableOpacity>
                     </View>
                 </View>
                 <ScrollView showsVerticalScrollIndicator={false}>

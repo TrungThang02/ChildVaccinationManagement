@@ -6,15 +6,17 @@ import { NavigationContainer } from '@react-navigation/native';
 import Welcome from '../components/Welcome';
 import Login from '../components/Login';
 import SignUp from '../components/SignUp';
-
+import Notification from '../components/Notification';
 import RouteHome from "../components/NavigationHome";
 const Stack = createStackNavigator();
 
 const Router = ({ navigation }) => {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="RouteHome" component={RouteHome} options={{ headerShown: false }} />
-      <Stack.Screen name="Welcome" component={Welcome} options={{ headerShown: false }} />
+            <Stack.Screen name="RouteHome" component={RouteHome} options={{ headerShown: false }} />
+       <Stack.Screen name="Welcome" component={Welcome} options={{ headerShown: false }} />
+
+       <Stack.Screen name="Notification" component={Notification} />
       <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
      
       <Stack.Screen name="SignUp" component={SignUp} options={{ headerShown: false }} />

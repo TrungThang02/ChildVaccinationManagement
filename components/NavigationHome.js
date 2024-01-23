@@ -5,8 +5,9 @@ import { Entypo } from 'react-native-vector-icons/Entypo';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import IconMT from 'react-native-vector-icons/MaterialIcons';
 import IconMTC from 'react-native-vector-icons/MaterialCommunityIcons';
-
+import Foundation from 'react-native-vector-icons/Foundation';
 import FontAwesome5  from 'react-native-vector-icons/FontAwesome5';
+import AntDesign from 'react-native-vector-icons/AntDesign'
 // import { createDrawerNavigator } from '@react-navigation/drawer';
 
 //import { useDrawerStatus } from '@react-navigation/drawer';
@@ -18,7 +19,7 @@ import Appointment from '../components/Appointment'
 import Notification from '../components/Notification';
 import User from '../components/User';
 import MakeAppointment from '../components/MakeAppointment';
-
+import VaccineDetails from './VaccineDetails';
 
 const tabBarIcon = icon => () => (
   <Ionicons name={icon} size={26} style={{ color: "black" }} />
@@ -34,7 +35,8 @@ const screenOptions = {
     left: 0,
     elevation: 0,
     height: 60,
-    background: "#fff",
+    background: "black",
+ 
 
   }
 }
@@ -57,13 +59,13 @@ const RouteHome = () => {
         />
         <Tab.Screen
           name="Portfolio"
-          component={Appointment}
+          component={VaccineDetails}
           options={{
             tabBarIcon: ({ focused }) => {
               return (
                 <View style={{ alignItems: "center", justifyContent: "center" }}>
-                  <IconMT name="date-range" size={24} color={focused ? "#16247d" : "#111"} />
-                  <Text style={{ fontSize: 12, color: "#16247d" }}>Lịch hẹn</Text>
+                  <AntDesign name="infocirlce" size={20} color={focused ? "#16247d" : "#111"} />
+                  <Text style={{ fontSize: 12, color: "#16247d" }}>Thông tin TC</Text>
                 </View>
               )
             }
@@ -101,8 +103,8 @@ const RouteHome = () => {
             tabBarIcon: ({ focused }) => {
               return (
                 <View style={{ alignItems: "center", justifyContent: "center" }}>
-                  <IconMTC name="bell-ring" size={24} color={focused ? "#16247d" : "#111"} />
-                  <Text style={{ fontSize: 12, color: "#16247d" }}>Thông báo</Text>
+                  <IconMT name="date-range" size={24} color={focused ? "#16247d" : "#111"} />
+                  <Text style={{ fontSize: 12, color: "#16247d" }}>Lịch hẹn</Text>
                 </View>
               )
             }
@@ -126,5 +128,6 @@ const RouteHome = () => {
    
   )
 }
+
 
 export default RouteHome
