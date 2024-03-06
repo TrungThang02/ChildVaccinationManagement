@@ -125,7 +125,7 @@ const User = ({ navigation }) => {
                     > 
                     <View style={{flexDirection:'row'}}>
                     <Text style={{ marginRight:10}}><Icon name='file-alt' size={26} style={{ color: "black" , margin:20}} /></Text>
-                    <Text style={styles.textbutton}> Hồ sơ bệnh án</Text>
+                    <Text style={styles.textbutton}> Hồ sơ tiêm chủng</Text>
                     </View>
          
                     </Pressable>

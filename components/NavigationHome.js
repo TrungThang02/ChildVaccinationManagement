@@ -89,7 +89,6 @@ const RouteHome = () => {
                   }}
                 >
                   <Ionicons name="add-sharp" size={30} color="#fff" style={{fontWeight: 'bold'}} />
-                  
                 </View>
                 
               )
