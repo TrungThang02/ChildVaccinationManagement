@@ -8,6 +8,10 @@ import Login from '../components/Login';
 import SignUp from '../components/SignUp';
 import Notification from '../components/Notification';
 import RouteHome from "../components/NavigationHome";
+import MakeAppointment from '../components/MakeAppointment';
+import VaccinationRecord from '../components/VaccinationRecord';
+import AppInfo from '../components/AppInfo';
+import ContactInfo from '../components/ContactInfo';
 const Stack = createStackNavigator();
 
 const Router = ({ navigation }) => {
@@ -20,7 +24,10 @@ const Router = ({ navigation }) => {
       <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
      
       <Stack.Screen name="SignUp" component={SignUp} options={{ headerShown: false }} />
-
+      <Stack.Screen name="MakeAppointment" component={MakeAppointment} />
+      <Stack.Screen name="VaccinationRecord" component={VaccinationRecord}  />
+      <Stack.Screen name="AppInfo" component={AppInfo}  />
+      <Stack.Screen name="ContactInfo" component={ContactInfo}  />
       
     </Stack.Navigator>
 

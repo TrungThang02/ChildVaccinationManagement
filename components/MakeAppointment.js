@@ -5,17 +5,17 @@ import { Searchbar, Appbar } from 'react-native-paper';
 const DATA = [
     {
         id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-        name: 'Phong Kham Da Khoa',
-        title: 'Binh Duong',
+        name: 'Sáng : 7h30 đến 8h30',
+        title: 'Vắc xin trị lười cho những đứa lười chảy nước',
     },
     {
         id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
-        name: 'Phong Kham Da Khoa',
+        name: 'Sáng : 7h30 đến 8h30',
         title: 'TH. HCM',
     },
     {
         id: '58694a0f-3da1-471f-bd96-145571e29d72',
-        name: 'Phong Kham Da Khoa',
+        name: 'Sáng : 7h30 đến 8h30',
         title: 'Vinh Long',
     },
     {
@@ -75,7 +75,7 @@ const MakeAppointment = () => {
             </View>
             <SafeAreaView>
                 <FlatList
-                style={{marginBottom:200}}
+                style={{}}
                     data={DATA}
                     renderItem={({ item }) => (
                         <Item title={item.title} name={item.name} />

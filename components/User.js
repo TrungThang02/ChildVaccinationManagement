@@ -7,6 +7,9 @@ import  Entypo  from 'react-native-vector-icons/Entypo';
 import IconMT from 'react-native-vector-icons/MaterialIcons'
 import { Avatar } from 'react-native-paper';
 import COLORS from '../constants/colors';
+
+
+import VaccinationRecord from './VaccinationRecord';
 const User = ({ navigation }) => {
     const [initializing, setInitializing] = useState(true);
     //   const { userInfo } = useContext(UserContext);
@@ -120,7 +123,7 @@ const User = ({ navigation }) => {
             }}>
                 <View style={{ margin: 5 }}>
                     <Pressable
-                        onPress={handleEdit}
+                       onPressIn={()=> navigation.navigate("VaccinationRecord")}
                         style={styles.button}
                     > 
                     <View style={{flexDirection:'row'}}>

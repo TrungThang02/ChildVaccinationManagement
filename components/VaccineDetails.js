@@ -21,7 +21,7 @@ const Details = () => {
     console.log(1);
 }
 
-const Item = ({ title, content, image }) => (
+const Item = ({ title, image }) => (
     <TouchableOpacity onPress={Details} style={styles.item}>
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
       <Image source={{ uri: image }} style={styles.image} />
@@ -63,7 +63,7 @@ const VaccineDetails = () => {
                     style={{ marginBottom: 200 }}
                     data={DATA}
                     renderItem={({ item }) => (
-                        <Item title={item.title} name={item.name} content={item.content} image={item.image} />
+                        <Item title={item.title} name={item.name} image={item.image} />
                     )}
                     keyExtractor={item => item.id}
                 />

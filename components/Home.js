@@ -3,7 +3,7 @@ import React from "react";
 import { View, Text, StyleSheet, Image, ScrollView, FlatList, TouchableOpacity, Alert } from 'react-native';
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Avatar, Card } from 'react-native-paper';
-
+import MakeAppointment from './MakeAppointment';
 
 
 const Home = ({ navigation }) => {
@@ -55,7 +55,7 @@ const Home = ({ navigation }) => {
                 <View>
 
                     <View style={styles.banner}>
-                        <TouchableOpacity style={{ ...styles.control, backgroundColor: '#F28076' }} onPress={() => alert("Bấm vào")}>
+                        <TouchableOpacity style={{ ...styles.control, backgroundColor: '#F28076' }} >
                             <View style={styles.imagebanner}>
                             <Image style={styles.imagebanner} source={require('../assets/images/calendar.png')} />
                             </View>
@@ -64,28 +64,30 @@ const Home = ({ navigation }) => {
                             </View>
                         </TouchableOpacity>
 
-                        <View style={{ ...styles.control, backgroundColor: '#2D99AE' }}>
+                        <TouchableOpacity  
+                        onPress={ ()=> navigation.navigate("MakeAppointment")}
+                        style={{ ...styles.control, backgroundColor: '#2D99AE' }}>
                             <View style={styles.imagebanner}>
                                 <Image style={styles.imagebanner} source={require('../assets/images/datlich.png')} />
                             </View>
                             <View>
                                 <Text style={styles.textbanner}>Đặt lịch tiêm</Text>
                             </View>
-                        </View>
+                        </TouchableOpacity>
                     </View>
                 </View>
                 <View>
 
                     <View style={styles.banner}>
-                    <View style={{ ...styles.control, backgroundColor: '#fe6d73' }}>
+                    <TouchableOpacity  style={{ ...styles.control, backgroundColor: '#fe6d73' }}>
                             <View style={styles.imagebanner}>
                             <Image style={styles.imagebanner} source={require('../assets/images/nhatky.png')} />
                             </View>
                             <View>
                                 <Text style={styles.textbanner}>Nhật ký tiêm chủng</Text>
                             </View>
-                        </View>
-                        <TouchableOpacity style={{ ...styles.control, backgroundColor: '#50b2c0' }} onPress={() => alert("Bấm vào")}>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={{ ...styles.control, backgroundColor: '#50b2c0' }} >
                             <View style={styles.imagebanner}>
                             <Image style={styles.imagebanner} source={require('../assets/images/danhmuc.png')} />
                             </View>
@@ -99,8 +101,10 @@ const Home = ({ navigation }) => {
                 </View>
                 <View>
 
-                    <View style={styles.banner}>
-                        <TouchableOpacity style={{ ...styles.control, backgroundColor: '#de4d86' }} onPress={() => alert("Bấm vào")}>
+                    <TouchableOpacity  style={styles.banner}>
+                        <TouchableOpacity 
+                        onPressIn={()=> navigation.navigate("VaccinationRecord")}
+                        style={{ ...styles.control, backgroundColor: '#de4d86' }} >
                             <View style={styles.imagebanner}>
                             <Image style={styles.imagebanner} source={require('../assets/images/hoso.png')} />
                             </View>
@@ -109,15 +113,17 @@ const Home = ({ navigation }) => {
                             </View>
                         </TouchableOpacity>
 
-                        <View style={{ ...styles.control, backgroundColor: '#3376bc' }}>
+                        <TouchableOpacity 
+                        onPress={()=> navigation.navigate("ContactInfo")}
+                        style={{ ...styles.control, backgroundColor: '#3376bc' }}>
                             <View style={styles.imagebanner}>
                             <Image style={styles.imagebanner} source={require('../assets/images/lienhe.png')} />
                             </View>
                             <View>
                                 <Text style={styles.textbanner}>Thông tin liên hệ</Text>
                             </View>
-                        </View>
-                    </View>
+                        </TouchableOpacity>
+                    </TouchableOpacity>
                 </View>
                 <View style={styles.feature}>
 
