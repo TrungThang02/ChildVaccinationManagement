@@ -4,7 +4,7 @@ import {View, StyleSheet} from 'react-native';
 const AppInfo = () => {
     return (
         <View>
-            
+            <Text>them ho so</Text>
         </View>
     );
 }

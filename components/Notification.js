@@ -2,8 +2,13 @@ import React from 'react';
 import {View, StyleSheet} from 'react-native';
 import { Text } from 'react-native-paper';
 import { Appbar } from 'react-native-paper';
+import { firebase } from '@react-native-firebase/app';
+import firestore from '@react-native-firebase/firestore';
+
+
 
 const Notification = () => {
+
     return (
         <View>
 
