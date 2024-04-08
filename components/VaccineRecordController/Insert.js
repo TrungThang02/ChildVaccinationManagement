@@ -7,6 +7,21 @@ import { dan_toc } from '../../data/Nation.json';
 import { quoc_gia } from '../../data/Country.json';
 import { dvhcvn } from '../../data/dvhcvn.json';
 
+
+const provinces = dvhcvn.map(level1 => ({
+  id: level1.level1_id,
+  name: level1.name,
+  districts: level1.level2s.map(level2 => ({
+    id: level2.level2_id,
+    name: level2.name,
+    communes: level2.level3s.map(level3 => ({
+      id: level3.level3_id,
+      name: level3.name
+    }))
+  }))
+}));
+
+
 const Insert = () => {
   const [relationship, setRelationship] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -24,14 +39,8 @@ const Insert = () => {
   const [communes, setCommunes] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const showDatePicker = () => {
-    setDatePickerVisibility(true);
-  };
-
-  const hideDatePicker = () => {
-    setDatePickerVisibility(false);
-  };
-
+  const showDatePicker = () => setDatePickerVisibility(true);
+  const hideDatePicker = () => setDatePickerVisibility(false);
   const handleDateChange = date => {
     setSelectedDate(date);
     hideDatePicker();
@@ -63,44 +72,63 @@ const Insert = () => {
     }
   };
 
-  const handleAddProfile = () => {
+  const handleAddVaccineRecord = () => {
     if (!relationship || !phoneNumber || !fullName || !selectedDate || !selectedCountry || !selectedNation || !selectedProvince || !selectedDistrict || !selectedCommune || !detail) {
       Alert.alert('Thông báo', 'Vui lòng điền đầy đủ thông tin.');
       return;
     }
-
+  
+    if (!selectedDate instanceof Date || isNaN(selectedDate.getTime())) {
+      Alert.alert('Thông báo', 'Vui lòng chọn ngày sinh hợp lệ.');
+      return;
+    }
+  
+    // Tìm tên quốc gia và dân tộc tương ứng dựa trên ID
+    const selectedCountryName = quoc_gia.find(country => country.id === selectedCountry)?.name || '';
+    const selectedNationName = dan_toc.find(nation => nation.id === selectedNation)?.name || '';
+  
+    // Tìm tên tỉnh/thành phố, quận/huyện và xã/phường/thị trấn tương ứng dựa trên ID
+    const selectedProvinceName = provinces.find(province => province.id === selectedProvince)?.name || '';
+    const selectedDistrictName = districts.find(district => district.id === selectedDistrict)?.name || '';
+    const selectedCommuneName = communes.find(commune => commune.id === selectedCommune)?.name || '';
+  
     firestore()
-      .collection('profiles')
+      .collection('Vaccinerecord')
       .add({
         relationship,
         phoneNumber,
         fullName,
-        selectedDate,
-        selectedCountry,
-        selectedNation,
-        selectedProvince,
-        selectedDistrict,
-        selectedCommune,
+        selectedDate: selectedDate.toISOString(),
+        selectedCountry: { id: selectedCountry, name: selectedCountryName },
+        selectedNation: { id: selectedNation, name: selectedNationName },
+        selectedProvince: { id: selectedProvince, name: selectedProvinceName },
+        selectedDistrict: { id: selectedDistrict, name: selectedDistrictName },
+        selectedCommune: { id: selectedCommune, name: selectedCommuneName },
         detail,
       })
       .then(() => {
-        console.log('Profile added!');
         Alert.alert('Thông báo', 'Hồ sơ đã được thêm thành công');
-        setRelationship('');
-        setPhoneNumber('');
-        setFullName('');
-        setSelectedDate('');
-        setSelectedCountry('');
-        setSelectedNation('');
-        setSelectedProvince('');
-        setSelectedDistrict('');
-        setSelectedCommune('');
-        setDetail('');
+        resetFields();
       })
       .catch(error => {
-        console.error('Error adding profile: ', error);
+        console.error('Lỗi khi thêm hồ sơ: ', error);
         Alert.alert('Lỗi', 'Đã xảy ra lỗi khi thêm hồ sơ, vui lòng thử lại sau');
       });
+  };
+  
+  
+
+  const resetFields = () => {
+    setRelationship('');
+    setPhoneNumber('');
+    setFullName('');
+    setSelectedDate('');
+    setSelectedCountry('');
+    setSelectedNation('');
+    setSelectedProvince('');
+    setSelectedDistrict('');
+    setSelectedCommune('');
+    setDetail('');
   };
 
   return (
@@ -112,7 +140,7 @@ const Insert = () => {
             <TextInput
               style={styles.TextInputContainer}
               value={relationship}
-              onChangeText={text => setRelationship(text)}
+              onChangeText={setRelationship}
             />
           </View>
           <View style={styles.form}>
@@ -250,7 +278,7 @@ const Insert = () => {
             />
           </View>
           <View style={styles.form}>
-            <TouchableOpacity style={styles.ButtonContainer} onPress={handleAddProfile}>
+            <TouchableOpacity style={styles.ButtonContainer} onPress={handleAddVaccineRecord}>
               <Text style={{ color: '#fff', fontSize: 15, textAlign: 'center', fontWeight: 'bold' }}>Thêm hồ sơ</Text>
             </TouchableOpacity>
           </View>
@@ -268,6 +296,7 @@ const styles = StyleSheet.create({
   },
   form: {
     marginVertical: 5,
+    color:'black'
   },
   label: {
     marginLeft: 10,
@@ -279,6 +308,7 @@ const styles = StyleSheet.create({
     borderColor: '#87A7FF',
     borderWidth: 1,
     borderRadius: 10,
+    color:'black',
   },
   TextInputContainer: {
     margin: 10,
@@ -288,6 +318,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     borderColor: '#87A7FF',
     borderWidth: 1,
+    color:'black'
   },
   ButtonContainer: {
     margin: 10,

@@ -1,95 +1,163 @@
-import React from 'react';
-import { View, StyleSheet, Text, FlatList, SafeAreaView, TouchableOpacity } from 'react-native';
-import { Searchbar, Appbar } from 'react-native-paper';
-
-const DATA = [
-    {
-        id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-        name: 'Sáng : 7h30 đến 8h30',
-        title: 'Vắc xin trị lười cho những đứa lười chảy nước',
-    },
-    {
-        id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
-        name: 'Sáng : 7h30 đến 8h30',
-        title: 'TH. HCM',
-    },
-    {
-        id: '58694a0f-3da1-471f-bd96-145571e29d72',
-        name: 'Sáng : 7h30 đến 8h30',
-        title: 'Vinh Long',
-    },
-    {
-        id: '58694a0f-3da1-471f-bd96-145571e29d7t2',
-        name: 'Phong Kham Da Khoa',
-        title: 'Vinh Long',
-    },
-    {
-        id: '58694a0f-3da1-471f-bd96-145571e29d2',
-        name: 'Phong Kham Da Khoa',
-        title: 'Vinh Long',
-    },
-];
-
-const Item = ({ title, name }) => (
-    <View style={styles.item}>
-        <Text style={styles.title}>{name}</Text>
-        <Text style={styles.name}>{title}</Text>
-      
-        <View style={styles.buttonContainer}>
-            <TouchableOpacity
-                style={styles.button}
-            >
-                <Text style={styles.buttonText}>Xem chi tiết</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-                style={[styles.button, { backgroundColor: '#87A7FF' }]}
-            >
-                <Text style={[styles.buttonText, { color: 'white' }]}>Đặt lịch</Text>
-            </TouchableOpacity>
-        </View>
-    </View>
-);
+import React, { useEffect, useState } from 'react';
+import { View, StyleSheet, Text, TouchableOpacity, FlatList, SafeAreaView, Modal, TouchableHighlight } from 'react-native';
+import { Searchbar } from 'react-native-paper';
+import firestore from '@react-native-firebase/firestore';
 
 const MakeAppointment = () => {
-    const [searchQuery, setSearchQuery] = React.useState('');
+    const [searchQuery, setSearchQuery] = useState('');
+    const [appointmentData, setAppointmentData] = useState([]);
+    const [patientRecords, setPatientRecords] = useState([]);
+    const [selectedAppointment, setSelectedAppointment] = useState(null);
+    const [modalVisible, setModalVisible] = useState(false);
+
+    useEffect(() => {
+        const unsubscribe = firestore().collection('appointment').onSnapshot(snapshot => {
+            const appointments = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            setAppointmentData(appointments);
+        });
+
+        return () => unsubscribe();
+    }, []);
 
     const onChangeSearch = query => setSearchQuery(query);
 
-    return (
-        <View style={{ backgroundColor: '#fff', flex: 1 }}>
-             <View style={{ padding: 10, alignItems: 'center', backgroundColor:'#87A7FF'}}>
-                <Text style={{ fontFamily: 'Arial', fontSize: 18, fontWeight: '600', fontWeight:'bold', color:'#fff'}}>ĐẶT LỊCH TIÊM</Text>
+    const handleBookAppointment = appointmentId => {
+        setSelectedAppointment(appointmentId);
+        setModalVisible(true);
+        firestore().collection('Vaccinerecord').where('appointmentId', '==', appointmentId).get()
+            .then(querySnapshot => {
+                const records = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                setPatientRecords(records);
+            })
+            .catch(error => {
+                console.log('Error getting documents: ', error);
+            });
+    };
+
+    const handleConfirmAppointment = (vaccineName, fullName, time) => {
+        if (selectedAppointment) {
+            // Save appointment information to collection
+            firestore().collection('Makeappointment').add({
+                vaccineName: vaccineName,
+                fullName: fullName,
+                time: time,
+            })
+            .then(() => {
+                console.log('Appointment successfully booked');
+                setModalVisible(false);
+            })
+            .catch(error => {
+                console.error('Error adding document: ', error);
+            });
+        } else {
+            console.log('Please select an appointment before booking.');
+        }
+    };
+
+    const renderItem = ({ item }) => (
+        <View style={styles.item}>
+            <Text style={styles.title}>{item.Name}</Text>
+            <Text style={styles.name}>{item.Time}</Text>
+            <View style={styles.buttonContainer}>
+                <TouchableOpacity
+                    style={styles.button}
+                    onPress={() => handleBookAppointment(item.id)}
+                >
+                    <Text style={styles.buttonText}>Đặt lịch</Text>
+                </TouchableOpacity>
             </View>
-           
+        </View>
+    );
+
+    const renderPatientRecordItem = ({ item }) => (
+        <TouchableOpacity
+            style={styles.patientRecordItem}
+            onPress={() => handleConfirmAppointment(item.vaccineName, item.fullName, item.time)}
+        >
+            <Text style={styles.patientRecordText}>{item.fullName}</Text>
+            {/* Add more fields here */}
+        </TouchableOpacity>
+    );
+
+    return (
+        <View style={styles.container}>
+            <View style={styles.header}>
+                <Text style={styles.headerText}>Đặt lịch</Text>
+            </View>
             <View style={styles.search}>
                 <Searchbar
-                    style={{backgroundColor:'transparent',
-                            borderColor:'#87A7FF',
-                            borderWidth:1,
-                            borderRadius:10
-                        }}
-                    placeholder="Tìm kiếm địa điểm..."
+                    style={styles.searchBar}
+                    placeholder="Search locations..."
                     onChangeText={onChangeSearch}
                     value={searchQuery}
                 />
             </View>
-            <SafeAreaView>
+            <SafeAreaView style={styles.listContainer}>
                 <FlatList
-                style={{}}
-                    data={DATA}
-                    renderItem={({ item }) => (
-                        <Item title={item.title} name={item.name} />
-                    )}
+                    data={appointmentData}
+                    renderItem={renderItem}
                     keyExtractor={item => item.id}
                 />
             </SafeAreaView>
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={modalVisible}
+                onRequestClose={() => {
+                    setModalVisible(false);
+                }}
+            >
+                <View style={styles.centeredView}>
+                    <View style={styles.modalView}>
+                        <Text style={styles.modalText}>Select patient record:</Text>
+                        <FlatList
+                            data={patientRecords}
+                            renderItem={renderPatientRecordItem}
+                            keyExtractor={item => item.id}
+                        />
+                        <TouchableHighlight
+                            style={{ ...styles.openButton, backgroundColor: '#2196F3' }}
+                            onPress={() => {
+                                setModalVisible(!modalVisible);
+                            }}
+                        >
+                            <Text style={styles.textStyle}>Đóng</Text>
+                        </TouchableHighlight>
+                    </View>
+                </View>
+            </Modal>
         </View>
     );
 }
 
-
 const styles = StyleSheet.create({
     container: {
+        flex: 1,
+        backgroundColor: '#fff',
+    },
+    header: {
+        padding: 10,
+        alignItems: 'center',
+        backgroundColor: '#87A7FF',
+    },
+    headerText: {
+        fontFamily: 'Arial',
+        fontSize: 18,
+        fontWeight: '600',
+        fontWeight: 'bold',
+        color: '#fff',
+    },
+    search: {
+        padding: 15,
+        paddingBottom: 5,
+    },
+    searchBar: {
+        backgroundColor: 'transparent',
+        borderColor: '#87A7FF',
+        borderWidth: 1,
+        borderRadius: 10,
+    },
+    listContainer: {
         flex: 1,
     },
     item: {
@@ -99,12 +167,10 @@ const styles = StyleSheet.create({
         marginHorizontal: 16,
         borderRadius: 10,
         elevation: 3,
-        shadowOffset: {width: -2, height: 4},  
-        shadowColor: 'black',  
-        shadowOpacity: 0.2,  
-        shadowRadius: 5,  
-      
-
+        shadowOffset: { width: -2, height: 4 },
+        shadowColor: 'black',
+        shadowOpacity: 0.2,
+        shadowRadius: 5,
     },
     title: {
         fontSize: 16,
@@ -116,25 +182,66 @@ const styles = StyleSheet.create({
     },
     buttonContainer: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'flex-end',
         alignItems: 'center',
         marginTop: 15,
     },
     button: {
         padding: 10,
-        backgroundColor: 'transparent',
+        backgroundColor: '#87A7FF',
         borderRadius: 20,
-        width: '45%',
-        borderWidth: 1,
-        borderColor: '#87A7FF',
+        width: '30%',
         alignItems: 'center',
     },
     buttonText: {
-        color: 'black',
+        color: 'white',
     },
-    search:{
-        padding:15,
-        paddingBottom:5,
+    patientRecordItem: {
+        backgroundColor: '#f9f9f9',
+        padding: 15,
+        borderBottomWidth: 1,
+        borderBottomColor: '#ccc',
+        marginBottom: 10,
+    },
+    patientRecordText: {
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
+    centeredView: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 22,
+    },
+    modalView: {
+        margin: 20,
+        backgroundColor: 'white',
+        borderRadius: 20,
+        padding: 35,
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5
+    },
+    openButton: {
+        backgroundColor: '#F194FF',
+        borderRadius: 20,
+        padding: 10,
+        elevation: 2
+    },
+    textStyle: {
+        color: 'white',
+        fontWeight: 'bold',
+        textAlign: 'center'
+    },
+    modalText: {
+        marginBottom: 15,
+        textAlign: 'center'
     }
 });
 
