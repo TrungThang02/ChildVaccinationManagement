@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, StyleSheet, Alert, SafeAreaView, ScrollView, TouchableOpacity, TextInput } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import firestore from '@react-native-firebase/firestore';
@@ -6,7 +6,7 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { dan_toc } from '../../data/Nation.json';
 import { quoc_gia } from '../../data/Country.json';
 import { dvhcvn } from '../../data/dvhcvn.json';
-
+import { UserContext } from '../../context/UseContext';
 
 const provinces = dvhcvn.map(level1 => ({
   id: level1.level1_id,
@@ -23,6 +23,8 @@ const provinces = dvhcvn.map(level1 => ({
 
 
 const Insert = () => {
+  const { userInfo } = useContext(UserContext);
+  const userEmail = userInfo?.email || '';
   const [relationship, setRelationship] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [fullName, setFullName] = useState('');
@@ -95,6 +97,7 @@ const Insert = () => {
     firestore()
       .collection('Vaccinerecord')
       .add({
+        userEmail,
         relationship,
         phoneNumber,
         fullName,

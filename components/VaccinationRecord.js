@@ -20,7 +20,7 @@ const VaccinationRecord = ({ navigation }) => {
             style={styles.recordItem}>
             <Text style={styles.fullName}>Họ và tên: {item.fullName}</Text>
             <Text style={styles.detailText}>Ngày sinh: {item.dateOfBirth}</Text>
-            {/* Add more fields here */}
+
         </TouchableOpacity>
     );
 

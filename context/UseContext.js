@@ -12,17 +12,24 @@ export const UserProvider = ({children}) => {
   const Users = firestore().collection('users');
 
   let loginUser = async (email, password) => {
- 
-  Users.doc(email).onSnapshot( user => {
-    if(!user.exists) {
-      setErrMessage("err")
-      return;
+    try {
+      const userCredential = await auth().signInWithEmailAndPassword(email, password);
+      const userEmail = userCredential.user.email;
+      
+      Users.doc(userEmail).onSnapshot(user => {
+        if (!user.exists) {
+          setErrMessage("Người dùng không tồn tại");
+          return;
+        }
+        const userData = user.data();
+        setUserInfo(userData);
+        setErrMessage(null);
+      });
+    } catch (error) {
+      setErrMessage(error.message);
     }
-    const res =  user.data();
-     setUserInfo(res);
-     setErrMessage(null);
-  });
-}
+  };
+  
 
   let logoutUser = () => {
     setUserInfo(null);

@@ -1,9 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { View, StyleSheet, Text, TouchableOpacity, FlatList, SafeAreaView, Modal, TouchableHighlight } from 'react-native';
 import { Searchbar } from 'react-native-paper';
 import firestore from '@react-native-firebase/firestore';
+import { UserContext } from '../context/UseContext';
 
 const MakeAppointment = () => {
+    const { userInfo } = useContext(UserContext);
+    const userEmail = userInfo?.email || '';
     const [searchQuery, setSearchQuery] = useState('');
     const [appointmentData, setAppointmentData] = useState([]);
     const [patientRecords, setPatientRecords] = useState([]);
@@ -19,41 +22,47 @@ const MakeAppointment = () => {
         return () => unsubscribe();
     }, []);
 
+    useEffect(() => {
+        if (userEmail) {
+            const unsubscribe = firestore().collection('Vaccinerecord').where('userEmail', '==', userEmail).onSnapshot(snapshot => {
+                const records = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                setPatientRecords(records);
+            });
+
+            return () => unsubscribe();
+        }
+    }, [userEmail]);
+
     const onChangeSearch = query => setSearchQuery(query);
 
     const handleBookAppointment = appointmentId => {
         setSelectedAppointment(appointmentId);
         setModalVisible(true);
-        firestore().collection('Vaccinerecord').where('appointmentId', '==', appointmentId).get()
-            .then(querySnapshot => {
-                const records = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                setPatientRecords(records);
-            })
-            .catch(error => {
-                console.log('Error getting documents: ', error);
-            });
     };
 
-    const handleConfirmAppointment = (vaccineName, fullName, time) => {
-        if (selectedAppointment) {
-            // Save appointment information to collection
+    const handleConfirmAppointment = ( Name, fullName, phoneNumber, time) => {
+        if (selectedAppointment &&  Name && fullName && phoneNumber && time) {
             firestore().collection('Makeappointment').add({
-                vaccineName: vaccineName,
+                 Name: Name,
                 fullName: fullName,
+                phoneNumber: phoneNumber,
                 time: time,
             })
             .then(() => {
                 console.log('Appointment successfully booked');
                 setModalVisible(false);
+                alert('Đặt lịch thành công!');
             })
             .catch(error => {
                 console.error('Error adding document: ', error);
+                alert('Đã xảy ra lỗi khi đặt lịch.');
             });
         } else {
-            console.log('Please select an appointment before booking.');
+            console.log('One or more fields are undefined.');
+            alert('Vui lòng điền đầy đủ thông tin đặt lịch.');
         }
     };
-
+    
     const renderItem = ({ item }) => (
         <View style={styles.item}>
             <Text style={styles.title}>{item.Name}</Text>
@@ -72,10 +81,10 @@ const MakeAppointment = () => {
     const renderPatientRecordItem = ({ item }) => (
         <TouchableOpacity
             style={styles.patientRecordItem}
-            onPress={() => handleConfirmAppointment(item.vaccineName, item.fullName, item.time)}
+            onPress={() => handleConfirmAppointment(item.Name, item.fullName, item.phoneNumber, item.time)}
         >
             <Text style={styles.patientRecordText}>{item.fullName}</Text>
-            {/* Add more fields here */}
+            <Text style={styles.patientRecordText}>{item.phoneNumber}</Text>
         </TouchableOpacity>
     );
 
@@ -87,7 +96,7 @@ const MakeAppointment = () => {
             <View style={styles.search}>
                 <Searchbar
                     style={styles.searchBar}
-                    placeholder="Search locations..."
+                    placeholder="Tìm kiếm..."
                     onChangeText={onChangeSearch}
                     value={searchQuery}
                 />
@@ -109,7 +118,7 @@ const MakeAppointment = () => {
             >
                 <View style={styles.centeredView}>
                     <View style={styles.modalView}>
-                        <Text style={styles.modalText}>Select patient record:</Text>
+                        <Text style={styles.modalText}>Chọn hồ sơ bệnh nhân:</Text>
                         <FlatList
                             data={patientRecords}
                             renderItem={renderPatientRecordItem}

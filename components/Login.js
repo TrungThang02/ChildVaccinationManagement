@@ -1,40 +1,27 @@
 import { View, Text, Image , Pressable, TextInput, TouchableOpacity, Alert} from 'react-native'
-import React, { useState } from 'react'
+import React, { useState , useContext} from 'react'
 import { SafeAreaView } from "react-native-safe-area-context";
 import COLORS from '../constants/colors'
 import Icon from 'react-native-vector-icons/Ionicons';
 import Checkbox from "expo-checkbox"
 import Button from '../components/Button';
 import auth from '@react-native-firebase/auth';
-
+import { UserContext } from '../context/UseContext';
 
 const Login = ({ navigation }) => {
     const [email, setEmail] = useState('');
     const [pass, setPass] = useState('');
     const [isPasswordShown, setIsPasswordShown] = useState(true);
     const [isChecked, setIsChecked] = useState(false);
-
+    let { loginUser } = useContext(UserContext);
     const HandleLogin = () => {
         if (pass === '' || email === '') {
             Alert.alert('Lỗi', 'Vui lòng kiểm tra email hoặc mật khẩu!');
         } else {
-            auth()
-                .signInWithEmailAndPassword(email, pass)
-                .then((userCredential) => {
-                    const user = userCredential.user;
-                    console.log(user.email)
-                    navigation.navigate('RouteHome');
-                })
-                .catch((error) => {
-                    if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
-                        Alert.alert('Lỗi', 'Vui lòng kiểm tra email hoặc mật khẩu!');
-                    } else {
-                        Alert.alert('Lỗi', 'Thông tin đăng nhập không đúng!');
-                        //console.error(error);
-                    }
-                });
-        }
+            loginUser(email, pass);
+            navigation.navigate('RouteHome');
     };
+}
     
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.white }}>

@@ -9,7 +9,7 @@ import CustomNavigationBar from './navigators/CustomNavigationBar';
 
 import Router from "./navigators/Navigation";
 
-
+import { UserProvider } from "./context/UseContext";
 
 
 export default function App() {
@@ -28,7 +28,9 @@ export default function App() {
       <Stack.Screen name="Home" component={RouteHome} /> 
       
     </Stack.Navigator> */}
+    <UserProvider>
     <Router/>
+    </UserProvider>
   </NavigationContainer>
   </PaperProvider>
   );

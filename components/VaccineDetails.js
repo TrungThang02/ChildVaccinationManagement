@@ -36,15 +36,12 @@ const Item = ({ title, image }) => (
 
 const VaccineDetails = () => {
     const [searchQuery, setSearchQuery] = React.useState('');
-
     const onChangeSearch = query => setSearchQuery(query);
-
     return (
         <View style={{ backgroundColor: '#fff', flex: 1 }}>
             <View style={{ padding: 10, alignItems: 'center', backgroundColor: '#87A7FF' }}>
                 <Text style={{ fontFamily: 'Arial', fontSize: 18, fontWeight: '600', fontWeight: 'bold', color: '#fff' }}>Thông tin tiêm chủng</Text>
             </View>
-
             <View style={styles.search}>
                 <Searchbar
                     style={{
