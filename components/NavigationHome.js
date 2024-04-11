@@ -97,7 +97,7 @@ const RouteHome = () => {
         />
         <Tab.Screen
           name="Prices"
-          component={Notification}
+          component={Appointment}
           options={{
             tabBarIcon: ({ focused }) => {
               return (

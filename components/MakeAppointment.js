@@ -12,6 +12,11 @@ const MakeAppointment = () => {
     const [patientRecords, setPatientRecords] = useState([]);
     const [selectedAppointment, setSelectedAppointment] = useState(null);
     const [modalVisible, setModalVisible] = useState(false);
+    const [vaccineInfo, setVaccineInfo] = useState({
+        vaccineName: '',
+        vaccinationTime: '',
+        selectedPatient: null,
+    });
 
     useEffect(() => {
         const unsubscribe = firestore().collection('appointment').onSnapshot(snapshot => {
@@ -34,33 +39,43 @@ const MakeAppointment = () => {
     }, [userEmail]);
 
     const onChangeSearch = query => setSearchQuery(query);
-
-    const handleBookAppointment = appointmentId => {
+    
+    const handleBookAppointment = (appointmentId, vaccineName, vaccinationTime) => {
         setSelectedAppointment(appointmentId);
+        setVaccineInfo(prevState => ({
+            ...prevState,
+            vaccineName: vaccineName,
+            vaccinationTime: vaccinationTime,
+           
+        }));
         setModalVisible(true);
     };
 
-    const handleConfirmAppointment = ( Name, fullName, phoneNumber, time) => {
-        if (selectedAppointment &&  Name && fullName && phoneNumber && time) {
-            firestore().collection('Makeappointment').add({
-                 Name: Name,
-                fullName: fullName,
-                phoneNumber: phoneNumber,
-                time: time,
-            })
-            .then(() => {
-                console.log('Appointment successfully booked');
-                setModalVisible(false);
-                alert('Đặt lịch thành công!');
-            })
-            .catch(error => {
-                console.error('Error adding document: ', error);
-                alert('Đã xảy ra lỗi khi đặt lịch.');
-            });
-        } else {
+    const handleConfirmAppointment = () => {
+        if (!selectedAppointment || !vaccineInfo.selectedPatient) {
             console.log('One or more fields are undefined.');
             alert('Vui lòng điền đầy đủ thông tin đặt lịch.');
+            return;
         }
+
+        firestore().collection('MakeAppointments').add({
+            appointmentId: selectedAppointment,
+            vaccineName: vaccineInfo.vaccineName,
+            vaccinationTime: vaccineInfo.vaccinationTime,
+            patientName: vaccineInfo.selectedPatient.fullName,
+            patientDOB: vaccineInfo.selectedPatient.selectedDate,
+            status: "pending",
+            email : userEmail
+        })
+        .then(() => {
+            console.log('Appointment successfully booked');
+            setModalVisible(false);
+            alert('Đặt lịch thành công!');
+        })
+        .catch(error => {
+            console.error('Error adding document: ', error);
+            alert('Đã xảy ra lỗi khi đặt lịch.');
+        });
     };
     
     const renderItem = ({ item }) => (
@@ -70,7 +85,7 @@ const MakeAppointment = () => {
             <View style={styles.buttonContainer}>
                 <TouchableOpacity
                     style={styles.button}
-                    onPress={() => handleBookAppointment(item.id)}
+                    onPress={() => handleBookAppointment(item.id, item.Name, item.Time)}
                 >
                     <Text style={styles.buttonText}>Đặt lịch</Text>
                 </TouchableOpacity>
@@ -81,10 +96,10 @@ const MakeAppointment = () => {
     const renderPatientRecordItem = ({ item }) => (
         <TouchableOpacity
             style={styles.patientRecordItem}
-            onPress={() => handleConfirmAppointment(item.Name, item.fullName, item.phoneNumber, item.time)}
+            onPress={() => setVaccineInfo(prevState => ({ ...prevState, selectedPatient: item }))}
         >
             <Text style={styles.patientRecordText}>{item.fullName}</Text>
-            <Text style={styles.patientRecordText}>{item.phoneNumber}</Text>
+            <Text style={styles.patientRecordText}>{item.selectedDate}</Text>
         </TouchableOpacity>
     );
 
@@ -131,6 +146,12 @@ const MakeAppointment = () => {
                             }}
                         >
                             <Text style={styles.textStyle}>Đóng</Text>
+                        </TouchableHighlight>
+                        <TouchableHighlight
+                            style={{ ...styles.openButton, backgroundColor: '#2196F3' }}
+                            onPress={handleConfirmAppointment}
+                        >
+                            <Text style={styles.textStyle}>Xác nhận đặt lịch</Text>
                         </TouchableHighlight>
                     </View>
                 </View>
@@ -241,7 +262,8 @@ const styles = StyleSheet.create({
         backgroundColor: '#F194FF',
         borderRadius: 20,
         padding: 10,
-        elevation: 2
+        elevation: 2,
+        marginTop: 10,
     },
     textStyle: {
         color: 'white',

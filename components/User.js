@@ -136,10 +136,12 @@ const User = ({ navigation }) => {
                         onPress={handleEdit}
                         style={styles.button}
                     > 
-                    <View style={{flexDirection:'row'}}>
+                    <TouchableOpacity 
+                    onPress={ ()=> navigation.navigate("VaccinationLog")}
+                    style={{flexDirection:'row'}}>
                     <Text style={{ marginRight:10}}><Entypo name='back-in-time' size={26} style={{ color: "black" , margin:20}} /></Text>
                     <Text style={styles.textbutton}>Lịch sử đặt lịch</Text>
-                    </View>
+                    </TouchableOpacity>
          
                     </Pressable>
                     <Pressable

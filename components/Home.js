@@ -77,9 +77,10 @@ const Home = ({ navigation }) => {
                     </View>
                 </View>
                 <View>
-
                     <View style={styles.banner}>
-                    <TouchableOpacity  style={{ ...styles.control, backgroundColor: '#fe6d73' }}>
+                    <TouchableOpacity  
+                       onPress={ ()=> navigation.navigate("VaccinationLog")}
+                    style={{ ...styles.control, backgroundColor: '#fe6d73' }}>
                             <View style={styles.imagebanner}>
                             <Image style={styles.imagebanner} source={require('../assets/images/nhatky.png')} />
                             </View>
