@@ -19,7 +19,7 @@ import Appointment from '../components/Appointment'
 import Notification from '../components/Notification';
 import User from '../components/User';
 import MakeAppointment from '../components/MakeAppointment';
-import VaccineDetails from './VaccineDetails';
+import VaccineDetails from './VaccineInfomation';
 
 const tabBarIcon = icon => () => (
   <Ionicons name={icon} size={26} style={{ color: "black" }} />

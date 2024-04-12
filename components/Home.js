@@ -55,7 +55,9 @@ const Home = ({ navigation }) => {
                 <View>
 
                     <View style={styles.banner}>
-                        <TouchableOpacity style={{ ...styles.control, backgroundColor: '#F28076' }} >
+                        <TouchableOpacity 
+                        onPress={ ()=> navigation.navigate("VaccinationSchedule")}
+                        style={{ ...styles.control, backgroundColor: '#F28076' }} >
                             <View style={styles.imagebanner}>
                             <Image style={styles.imagebanner} source={require('../assets/images/calendar.png')} />
                             </View>
@@ -88,12 +90,14 @@ const Home = ({ navigation }) => {
                                 <Text style={styles.textbanner}>Nhật ký tiêm chủng</Text>
                             </View>
                         </TouchableOpacity>
-                        <TouchableOpacity style={{ ...styles.control, backgroundColor: '#50b2c0' }} >
+                        <TouchableOpacity 
+                         onPress={ ()=> navigation.navigate("VaccineList")}
+                        style={{ ...styles.control, backgroundColor: '#50b2c0' }} >
                             <View style={styles.imagebanner}>
                             <Image style={styles.imagebanner} source={require('../assets/images/danhmuc.png')} />
                             </View>
                             <View>
-                                <Text style={styles.textbanner}>Danh mục Vắc xin</Text>
+                                <Text style={styles.textbanner}>Danh sách Vắc xin</Text>
                             </View>
                         </TouchableOpacity>
 
