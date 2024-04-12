@@ -1,8 +1,9 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { View, StyleSheet, Text, TouchableOpacity, FlatList, SafeAreaView, Modal, TouchableHighlight } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity, FlatList, SafeAreaView, Modal, TouchableHighlight, Platform } from 'react-native';
 import { Searchbar } from 'react-native-paper';
 import firestore from '@react-native-firebase/firestore';
 import { UserContext } from '../context/UseContext';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 const MakeAppointment = () => {
     const { userInfo } = useContext(UserContext);
@@ -16,7 +17,9 @@ const MakeAppointment = () => {
         vaccineName: '',
         vaccinationTime: '',
         selectedPatient: null,
+        selectedDate: new Date(),
     });
+    const [datePickerVisible, setDatePickerVisible] = useState(false);
 
     useEffect(() => {
         const unsubscribe = firestore().collection('appointment').onSnapshot(snapshot => {
@@ -46,13 +49,12 @@ const MakeAppointment = () => {
             ...prevState,
             vaccineName: vaccineName,
             vaccinationTime: vaccinationTime,
-           
         }));
         setModalVisible(true);
     };
 
     const handleConfirmAppointment = () => {
-        if (!selectedAppointment || !vaccineInfo.selectedPatient) {
+        if (!selectedAppointment || !vaccineInfo.selectedPatient || !vaccineInfo.selectedDate) {
             console.log('One or more fields are undefined.');
             alert('Vui lòng điền đầy đủ thông tin đặt lịch.');
             return;
@@ -64,6 +66,7 @@ const MakeAppointment = () => {
             vaccinationTime: vaccineInfo.vaccinationTime,
             patientName: vaccineInfo.selectedPatient.fullName,
             patientDOB: vaccineInfo.selectedPatient.selectedDate,
+            vaccinationDate: vaccineInfo.selectedDate,
             status: "pending",
             email : userEmail
         })
@@ -77,7 +80,49 @@ const MakeAppointment = () => {
             alert('Đã xảy ra lỗi khi đặt lịch.');
         });
     };
-    
+
+    const renderDatePicker = () => {
+        const today = new Date();
+        const selectedDate = vaccineInfo.selectedDate || new Date();
+
+        if (Platform.OS === 'ios') {
+            return (
+                <DateTimePicker
+                    value={selectedDate}
+                    minimumDate={today}
+                    mode="date"
+                    display="spinner"
+                    onChange={(event, date) => {
+                        setDatePickerVisible(false);
+                        if (date) {
+                            setVaccineInfo(prevState => ({
+                                ...prevState,
+                                selectedDate: date,
+                            }));
+                        }
+                    }}
+                />
+            );
+        } else {
+            return (
+                <DateTimePicker
+                    value={selectedDate}
+                    minimumDate={today}
+                    mode="date"
+                    onChange={(event, date) => {
+                        setDatePickerVisible(false);
+                        if (date) {
+                            setVaccineInfo(prevState => ({
+                                ...prevState,
+                                selectedDate: date,
+                            }));
+                        }
+                    }}
+                />
+            );
+        }
+    };
+
     const renderItem = ({ item }) => (
         <View style={styles.item}>
             <Text style={styles.title}>{item.Name}</Text>
@@ -98,8 +143,8 @@ const MakeAppointment = () => {
             style={styles.patientRecordItem}
             onPress={() => setVaccineInfo(prevState => ({ ...prevState, selectedPatient: item }))}
         >
-            <Text style={styles.patientRecordText}>{item.fullName}</Text>
-            <Text style={styles.patientRecordText}>{item.selectedDate}</Text>
+            <Text style={styles.patientRecordText}>Tên: {item.fullName}</Text>
+            <Text style={styles.patientRecordText}>Ngày sinh: {new Date(item.selectedDate).toLocaleDateString()}</Text>
         </TouchableOpacity>
     );
 
@@ -133,12 +178,29 @@ const MakeAppointment = () => {
             >
                 <View style={styles.centeredView}>
                     <View style={styles.modalView}>
-                        <Text style={styles.modalText}>Chọn hồ sơ bệnh nhân:</Text>
+                        <Text style={styles.modalText}>Chọn hồ sơ tiêm chủng:</Text>
                         <FlatList
                             data={patientRecords}
                             renderItem={renderPatientRecordItem}
                             keyExtractor={item => item.id}
                         />
+                        <TouchableOpacity
+                            style={{ ...styles.openButton, backgroundColor: '#2196F3' }}
+                            onPress={() => setDatePickerVisible(true)}
+                        >
+                            <Text style={styles.textStyle}>Chọn ngày</Text>
+                        </TouchableOpacity>
+                        {datePickerVisible && renderDatePicker()}
+                        <Text style={styles.selectedDateText}>
+                            {vaccineInfo.selectedDate ? `Ngày chọn: ${vaccineInfo.selectedDate.toLocaleDateString()}` : 'Chưa chọn ngày'}
+                        </Text>
+                        
+                        <TouchableHighlight
+                            style={{ ...styles.openButton, backgroundColor: '#2196F3' }}
+                            onPress={handleConfirmAppointment}
+                        >
+                            <Text style={styles.textStyle}>Xác nhận đặt lịch</Text>
+                        </TouchableHighlight>
                         <TouchableHighlight
                             style={{ ...styles.openButton, backgroundColor: '#2196F3' }}
                             onPress={() => {
@@ -146,12 +208,6 @@ const MakeAppointment = () => {
                             }}
                         >
                             <Text style={styles.textStyle}>Đóng</Text>
-                        </TouchableHighlight>
-                        <TouchableHighlight
-                            style={{ ...styles.openButton, backgroundColor: '#2196F3' }}
-                            onPress={handleConfirmAppointment}
-                        >
-                            <Text style={styles.textStyle}>Xác nhận đặt lịch</Text>
                         </TouchableHighlight>
                     </View>
                 </View>
@@ -227,27 +283,29 @@ const styles = StyleSheet.create({
         color: 'white',
     },
     patientRecordItem: {
-        backgroundColor: '#f9f9f9',
+        backgroundColor: '#fff',
         padding: 15,
         borderBottomWidth: 1,
         borderBottomColor: '#ccc',
-        marginBottom: 10,
+      
     },
     patientRecordText: {
         fontSize: 16,
-        fontWeight: 'bold',
+        
     },
     centeredView: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: 22,
+       
     },
     modalView: {
-        margin: 20,
+        margin: 10,
         backgroundColor: 'white',
-        borderRadius: 20,
-        padding: 35,
+        borderRadius: 10,
+        width: 350,
+        height:800,
+        padding:50,
         alignItems: 'center',
         shadowColor: '#000',
         shadowOffset: {
@@ -264,6 +322,7 @@ const styles = StyleSheet.create({
         padding: 10,
         elevation: 2,
         marginTop: 10,
+        width:200,
     },
     textStyle: {
         color: 'white',
@@ -271,8 +330,12 @@ const styles = StyleSheet.create({
         textAlign: 'center'
     },
     modalText: {
-        marginBottom: 15,
+       
         textAlign: 'center'
+    },
+    selectedDateText: {
+        marginTop: 10,
+        fontSize: 16,
     }
 });
 
