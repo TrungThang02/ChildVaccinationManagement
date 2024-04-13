@@ -16,7 +16,7 @@ import Insert from '../components/VaccineRecordController/Insert';
 import VaccinationLog from '../components/VaccinationLog';
 import VaccinationSchedule from '../components/VaccinationSchedule';
 import VaccineList from '../components/VaccineList';
-
+import Update from '../components/VaccineRecordController/Update';
 const Stack = createStackNavigator();
 
 const Router = ({ navigation }) => {
@@ -38,6 +38,7 @@ const Router = ({ navigation }) => {
       <Stack.Screen name="VaccinationLog" component={VaccinationLog}  />
       <Stack.Screen name="VaccinationSchedule" component={VaccinationSchedule}  />
       <Stack.Screen name="VaccineList" component={VaccineList}  />
+      <Stack.Screen name="Update" component={Update}  />
       
     </Stack.Navigator>
 

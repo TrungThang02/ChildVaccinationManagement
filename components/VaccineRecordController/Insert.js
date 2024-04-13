@@ -168,7 +168,8 @@ const Insert = () => {
               <TouchableOpacity
                 style={{}}
                 onPress={showDatePicker}>
-                <Text style={{ fontSize: 15 }}>Chọn ngày sinh: {selectedDate.toString()}</Text>
+                <Text style={{ fontSize: 15 }}>Chọn ngày sinh: {selectedDate ? selectedDate.toLocaleDateString('vi-VN') : ''}</Text>
+
 
               </TouchableOpacity>
               <DateTimePickerModal
@@ -183,7 +184,7 @@ const Insert = () => {
           <View style={styles.form}>
             <View style={{ flexDirection: 'row' }}>
               <View style={{ flex: 1 }}>
-                <Text style={styles.label}>Quốc gia (*)</Text>
+                <Text style={styles.label}>Quốc tịch (*)</Text>
                 <Picker
                   style={styles.pickerStyle}
                   selectedValue={selectedCountry}
