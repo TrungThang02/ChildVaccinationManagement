@@ -140,11 +140,11 @@ const User = ({ navigation }) => {
                     onPress={ ()=> navigation.navigate("VaccinationLog")}
                     style={{flexDirection:'row'}}>
                     <Text style={{ marginRight:10}}><Entypo name='back-in-time' size={26} style={{ color: "black" , margin:20}} /></Text>
-                    <Text style={styles.textbutton}>Lịch sử đặt lịch</Text>
+                    <Text style={styles.textbutton}>Lịch sử tiêm</Text>
                     </TouchableOpacity>
          
                     </Pressable>
-                    <Pressable
+                    {/* <Pressable
                         onPress={handleEdit}
                         style={styles.button}
                     > 
@@ -153,7 +153,7 @@ const User = ({ navigation }) => {
                     <Text style={styles.textbutton}>Phiếu khám bệnh</Text>
                     </View>
          
-                    </Pressable>
+                    </Pressable> */}
                     <Pressable
                         onPress={handleEdit}
                         style={styles.button}

@@ -1,32 +1,53 @@
-import React from 'react';
-import { StyleSheet, View, ScrollView } from 'react-native';
-import ImageViewer from 'react-native-image-zoom-viewer';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, View, Text, TouchableOpacity, Image, Button } from 'react-native';
+import { firebase } from '@react-native-firebase/firestore';
+import { useNavigation } from '@react-navigation/native';
 
 const VaccinationSchedule = () => {
-    const images = [{
-        url: "https://firebasestorage.googleapis.com/v0/b/childvaccinationmanageme-f8806.appspot.com/o/images%2Flichtiem1den10.png?alt=media&token=b7ad32b0-9f50-4558-b29f-06c2bfce81c0",
-        props: {
-            resizeMode: 'contain'
-        }
-    }];
-    
+    const [calendarData, setCalendarData] = useState([]);
+    const [selectedItem, setSelectedItem] = useState(null);
+    const navigation = useNavigation();
+
+    useEffect(() => {
+        const unsubscribe = firebase.firestore().collection('calendar').onSnapshot(snapshot => {
+            const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            setCalendarData(data);
+        });
+        return () => unsubscribe();
+    }, []);
+
+    const handleItemClick = (item) => {
+        setSelectedItem(item);
+        navigation.navigate('ImageDetail', { imageUri: item.image });
+    };
+
     return (
         <View style={styles.container}>
-            <View style={styles.innerContainer}>
-                <ScrollView
-                    contentContainerStyle={{ flexGrow: 1 }}
-                    maximumZoomScale={2}
-                    minimumZoomScale={1}
-                    showsHorizontalScrollIndicator={false}
-                    showsVerticalScrollIndicator={false}
-                >
-                    <ImageViewer
-                        imageUrls={images}
-                        enableSwipeDown={false}
-                        renderIndicator={() => null}
-                    />
-                </ScrollView>
+            <View style={styles.listContainer}>
+                {calendarData.map((item, index) => (
+                    <TouchableOpacity key={index} onPress={() => handleItemClick(item)}>
+                       <View style={styles.itemContainer}>
+    <Text>{item.Time.toString()}</Text>
+</View>
+
+                    </TouchableOpacity>
+                ))}
             </View>
+        </View>
+    );
+}
+
+const ImageDetail = ({ route }) => {
+    const { imageUri } = route.params;
+    const navigation = useNavigation(); 
+
+    return (
+        <View style={styles.container}>
+            <Image
+                source={{ uri: imageUri }}
+                style={styles.image}
+            />
+            <Button title="Close" onPress={() => navigation.goBack()} />
         </View>
     );
 }
@@ -34,10 +55,21 @@ const VaccinationSchedule = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff', 
+        backgroundColor: '#fff',
     },
-    innerContainer: {
+    listContainer: {
         flex: 1,
+    },
+    itemContainer: {
+        paddingHorizontal: 20,
+        paddingVertical: 10,
+        borderBottomWidth: 1,
+        borderBottomColor: '#ccc',
+    },
+    image: {
+        flex: 1,
+        resizeMode: 'contain',
+        marginBottom: 20,
     },
 });
 

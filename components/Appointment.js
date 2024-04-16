@@ -46,43 +46,46 @@ const Appointment = () => {
         fetchAppointments();
     };
 
-    const renderItem = ({ item }) => (
-        <View style={styles.itemContainer}>
-            <View style={styles.rowContainer}>
-                <Text style={styles.label}>Tên vaccine:</Text>
-                <Text>{item.vaccineName}</Text>
-            </View>
-            <Divider />
-            <View style={styles.rowContainer}>
-                <Text style={styles.label}>Thời gian:</Text>
-                <Text>{item.vaccinationTime}</Text>
-            </View>
-            <Divider />
-            <View style={styles.rowContainer}>
-                <Text style={styles.label}>Tên:</Text>
-                <Text>{item.patientName}</Text>
-            </View>
-            <Divider />
-            <View style={styles.rowContainer}>
-                <Text style={styles.label}>Tuổi:</Text>
-                <Text>{calculateAge(item.patientDOB)}</Text>
-            </View>
-            <Divider />
-            <View style={styles.rowContainer}>
-                <Text style={styles.label}>Ngày đặt lịch:</Text>
-                <Text>{item.vaccinationDate}</Text>
-            </View>
-            <View style={styles.rowContainer}>
-                <Text style={styles.label}>Trạng thái:</Text>
-                <Text>{item.status}</Text>
-            </View>
-            {item.status === 'pending' && (
-                <TouchableOpacity onPress={() => handleDeleteAppointment(item.id)}>
-                    <Text style={styles.deleteButton}>Hủy lịch</Text>
-                </TouchableOpacity>
-            )}
-        </View>
-    );
+    const renderItem = ({ item }) => {
+        // Chỉ hiển thị các mục có trạng thái 'pending'
+        if (item.status === 'pending') {
+            return (
+                <View style={styles.itemContainer}>
+                    <View style={styles.rowContainer}>
+                        <Text style={styles.label}>Tên vaccine:</Text>
+                        <Text>{item.vaccineName}</Text>
+                    </View>
+                    <Divider />
+                    <View style={styles.rowContainer}>
+                        <Text style={styles.label}>Thời gian:</Text>
+                        <Text>{item.vaccinationTime}</Text>
+                    </View>
+                    <Divider />
+                    <View style={styles.rowContainer}>
+                        <Text style={styles.label}>Tên:</Text>
+                        <Text>{item.patientName}</Text>
+                    </View>
+                    <Divider />
+                    <View style={styles.rowContainer}>
+                        <Text style={styles.label}>Tuổi:</Text>
+                        <Text>{calculateAge(item.patientDOB)}</Text>
+                    </View>
+                    <Divider />
+                    <View style={styles.rowContainer}>
+                        <Text style={styles.label}>Ngày đặt lịch:</Text>
+                        <Text>{item.vaccinationDate}</Text>
+                    </View>
+                    <TouchableOpacity onPress={() => handleDeleteAppointment(item.id)}>
+                        <Text style={styles.deleteButton}>Hủy lịch</Text>
+                    </TouchableOpacity>
+                </View>
+            );
+        } else {
+            // Trả về null nếu trạng thái không phải 'pending' để ẩn mục đó
+            return null;
+        }
+    };
+    
 
     const calculateAge = (dob) => {
         const dobDate = new Date(Date.parse(dob));
