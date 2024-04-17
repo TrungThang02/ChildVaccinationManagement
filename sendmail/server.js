@@ -8,7 +8,7 @@ const port = 3001;
 app.use(bodyParser.json());
 
 app.post('/send-email', (req, res) => {
-    const { recipient, subject, text } = req.body;
+    const { recipient, subject, html } = req.body; // Sử dụng trường html thay vì text
 
     const transporter = nodemailer.createTransport({
         service: 'gmail',
@@ -22,7 +22,7 @@ app.post('/send-email', (req, res) => {
         from: 'trantrungthang01699516993@gmail.com', 
         to: recipient,
         subject: subject,
-        text: text
+        html: html // Sử dụng trường html
     };
 
     transporter.sendMail(mailOptions, (error, info) => {

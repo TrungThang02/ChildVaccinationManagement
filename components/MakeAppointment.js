@@ -4,6 +4,7 @@ import { Searchbar } from 'react-native-paper';
 import firestore from '@react-native-firebase/firestore';
 import { UserContext } from '../context/UseContext';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import axios from 'axios';
 
 const MakeAppointment = () => {
     const { userInfo } = useContext(UserContext);
@@ -44,13 +45,24 @@ const MakeAppointment = () => {
     const onChangeSearch = query => setSearchQuery(query);
     
     const handleBookAppointment = (appointmentId, vaccineName, vaccinationTime) => {
+        // Lưu thời điểm bạn đặt lịch
+        const bookedTime = new Date();
+
         setSelectedAppointment(appointmentId);
         setVaccineInfo(prevState => ({
             ...prevState,
             vaccineName: vaccineName,
             vaccinationTime: vaccinationTime,
+            bookedTime: bookedTime, // Lưu thời điểm bạn đặt lịch vào state
+           
         }));
+        
         setModalVisible(true);
+
+        // Gửi email nhắc nhở sau 3 phút
+        setTimeout(() => {
+            sendReminderEmail(bookedTime); // Truyền thời điểm bạn đặt lịch vào hàm gửi email nhắc nhở
+        }, 180000); // 3 phút = 180000 milliseconds
     };
 
     const handleConfirmAppointment = () => {
@@ -72,6 +84,10 @@ const MakeAppointment = () => {
         })
         .then(() => {
             console.log('Appointment successfully booked');
+
+            // Gửi email
+            sendAppointmentEmail();
+            sendReminderEmail();
             setModalVisible(false);
             alert('Đặt lịch thành công!');
         })
@@ -80,6 +96,126 @@ const MakeAppointment = () => {
             alert('Đã xảy ra lỗi khi đặt lịch.');
         });
     };
+
+    const sendAppointmentEmail = async () => {
+        
+    try {
+        const appointmentDetails = {
+            vaccineName: vaccineInfo.vaccineName,
+            vaccinationTime: vaccineInfo.vaccinationTime,
+            patientName: vaccineInfo.selectedPatient.fullName,
+            patientDOB: vaccineInfo.selectedPatient.selectedDate,
+            vaccinationDate: vaccineInfo.selectedDate.toLocaleDateString()
+        };
+        const formattedDOB = new Date(appointmentDetails.patientDOB).toLocaleDateString('vi-VN');
+
+        // Construct HTML content
+        const htmlContent = `
+        <html>
+        <head>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    padding: 20px;
+                    background-color: #f0f0f0;
+                    color: #333;
+                }
+                .container {
+                    max-width: 600px;
+                    margin: 0 auto;
+                    background-color: #fff;
+                    border-radius: 10px;
+                    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                    
+                }
+              .content{
+                padding: 20px
+              }
+                h1 {
+                    font-size: 18px;
+                    font-weight: bold;
+                    margin-bottom: 20px;
+                    color: #007bff;
+                }
+                p {
+                    margin-bottom: 10px;
+                    font-size: 16px;
+                    line-height: 1.6;
+                }
+                .highlight {
+                    font-weight: bold;
+                    color: black;
+                }
+                .info {
+                    margin-top: 20px;
+                    border-top: 1px solid #ccc;
+                    padding-top: 20px;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+              <div style="padding: 10px; background:#bad5e4">
+                 <h1 style="text-align:center;color:black">PHIẾU ĐẶT LỊCH TIÊM CHỦNG</h1>
+              </div>
+              <div class="content">
+                <p><span class="highlight">Tên Vaccine:</span> ${appointmentDetails.vaccineName}</p>
+                <p><span class="highlight">Thời gian tiêm:</span> ${appointmentDetails.vaccinationTime}</p>
+                <p><span class="highlight">Họ và tên:</span> ${appointmentDetails.patientName}</p>
+                <p><span class="highlight">Ngày sinh:</span> ${formattedDOB}</p>
+                <p><span class="highlight">Ngày tiêm:</span> ${appointmentDetails.vaccinationDate}</p>
+            </div>
+              </div>
+        </body>
+    </html>
+`;
+
+        // Send email using axios
+        const response = await axios.post('http://192.168.1.3:3001/send-email', {
+            recipient: userEmail, 
+            subject: 'Xác nhận đặt lịch tiêm chủng',
+            html: htmlContent
+        });
+        
+        console.log(response.data); // Log response data
+    } catch (error) {
+        console.error('Error sending appointment email:', error);
+    }
+};
+
+    const sendReminderEmail = async (bookedTime) => {
+    try {
+        // Tính thời gian từ lúc đặt lịch đến thời điểm hiện tại
+        const currentTime = new Date();
+        const timeDiff = currentTime - bookedTime;
+        const timeDiffMinutes = Math.floor(timeDiff / 60000); // Chuyển đổi sang phút
+
+        // Nếu bạn muốn gửi email nhắc nhở tối muộn, bạn có thể kiểm tra thời gian ở đây
+        if (timeDiffMinutes >= 60) {
+            // Construct HTML content
+            const htmlContent = `
+            <html>
+            <head>
+            </head>
+            <body>
+               <h1>Đây là email nhắc nhở</h1>
+            </body>
+            </html>
+            `;
+
+            // Send email using axios
+            const response = await axios.post('http://192.168.1.3:3001/send-email', {
+                recipient: userEmail, 
+                subject: 'Nhắc nhở đặt lịch tiêm chủng',
+                html: htmlContent
+            });
+            
+            console.log(response.data); // Log response data
+        }
+    } catch (error) {
+        console.error('Error sending appointment email:', error);
+    }
+};
 
     const renderDatePicker = () => {
         const today = new Date();
