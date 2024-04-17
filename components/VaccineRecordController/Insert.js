@@ -305,7 +305,8 @@ const styles = StyleSheet.create({
   label: {
     marginLeft: 10,
     marginBottom: 5,
-    color: 'black'
+    color: 'black',
+    fontWeight:'bold',
   },
   pickerStyle: {
     backgroundColor: 'transparent',

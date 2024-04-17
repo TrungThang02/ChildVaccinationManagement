@@ -7,14 +7,14 @@ import  Entypo  from 'react-native-vector-icons/Entypo';
 import IconMT from 'react-native-vector-icons/MaterialIcons'
 import { Avatar } from 'react-native-paper';
 import COLORS from '../constants/colors';
-
+import { UserProvider, UserContext } from '../context/UseContext';
 
 import VaccinationRecord from './VaccinationRecord';
 const User = ({ navigation }) => {
     const [initializing, setInitializing] = useState(true);
     //   const { userInfo } = useContext(UserContext);
     //   const [user, setUser] = useState(null);
-    //   const { logoutUser } = useContext(UserContext);
+      const { logoutUser } = useContext(UserContext);
 
     useEffect(() => {
         const unsubscribe = auth().onAuthStateChanged((user) => {
@@ -60,7 +60,7 @@ const User = ({ navigation }) => {
                 {
                     text: 'Logout',
                     onPress: () => {
-                        // logoutUser();
+                        logoutUser();
                         navigation.navigate('Login');
                     },
                     style: 'default',
@@ -100,7 +100,9 @@ const User = ({ navigation }) => {
                     </Text>
                 </View>
                 <View style={{ justifyContent: 'center', padding: 10 }}>
-                    <TouchableOpacity style={{
+                    <TouchableOpacity 
+                        onPress={handleLogout}
+                        style={{
                         backgroundColor: 'transparent',
                         padding: 10,
                         width: 120,
