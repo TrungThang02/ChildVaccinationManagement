@@ -59,10 +59,7 @@ const MakeAppointment = () => {
         
         setModalVisible(true);
 
-        // Gửi email nhắc nhở sau 3 phút
-        setTimeout(() => {
-            sendReminderEmail(bookedTime); // Truyền thời điểm bạn đặt lịch vào hàm gửi email nhắc nhở
-        }, 180000); // 3 phút = 180000 milliseconds
+      
     };
 
     const handleConfirmAppointment = () => {
@@ -87,7 +84,6 @@ const MakeAppointment = () => {
 
             // Gửi email
             sendAppointmentEmail();
-            sendReminderEmail();
             setModalVisible(false);
             alert('Đặt lịch thành công!');
         })
@@ -183,39 +179,7 @@ const MakeAppointment = () => {
     }
 };
 
-    const sendReminderEmail = async (bookedTime) => {
-    try {
-        // Tính thời gian từ lúc đặt lịch đến thời điểm hiện tại
-        const currentTime = new Date();
-        const timeDiff = currentTime - bookedTime;
-        const timeDiffMinutes = Math.floor(timeDiff / 60000); // Chuyển đổi sang phút
-
-        // Nếu bạn muốn gửi email nhắc nhở tối muộn, bạn có thể kiểm tra thời gian ở đây
-        if (timeDiffMinutes >= 60) {
-            // Construct HTML content
-            const htmlContent = `
-            <html>
-            <head>
-            </head>
-            <body>
-               <h1>Đây là email nhắc nhở</h1>
-            </body>
-            </html>
-            `;
-
-            // Send email using axios
-            const response = await axios.post('http://192.168.1.3:3001/send-email', {
-                recipient: userEmail, 
-                subject: 'Nhắc nhở đặt lịch tiêm chủng',
-                html: htmlContent
-            });
-            
-            console.log(response.data); // Log response data
-        }
-    } catch (error) {
-        console.error('Error sending appointment email:', error);
-    }
-};
+    
 
     const renderDatePicker = () => {
         const today = new Date();
