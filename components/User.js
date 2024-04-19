@@ -16,6 +16,8 @@ const User = ({ navigation }) => {
     //   const [user, setUser] = useState(null);
       const { logoutUser } = useContext(UserContext);
 
+      const { userInfo } = useContext(UserContext);
+      const userEmail = userInfo?.email || '';
     useEffect(() => {
         const unsubscribe = auth().onAuthStateChanged((user) => {
             // setUser(user);
@@ -51,14 +53,14 @@ const User = ({ navigation }) => {
     const handleLogout = () => {
         Alert.alert(
             '',
-            'Are you sure?',
+            'Bạn chắc chưa?',
             [
                 {
-                    text: 'Cancel',
+                    text: 'Hủy',
                     style: 'cancel',
                 },
                 {
-                    text: 'Logout',
+                    text: 'Đăng xuất',
                     onPress: () => {
                         logoutUser();
                         navigation.navigate('Login');
@@ -96,7 +98,7 @@ const User = ({ navigation }) => {
                 />
                 <View style={{ justifyContent: 'center', padding: 10 }}>
                     <Text style={{ fontSize: 20, color: '#fff', fontWeight: 'bold' }}>
-                        Tran Trung Thang
+                       {userEmail}
                     </Text>
                 </View>
                 <View style={{ justifyContent: 'center', padding: 10 }}>

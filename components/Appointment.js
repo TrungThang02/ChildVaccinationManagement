@@ -33,7 +33,6 @@ const NotificationModal = ({ id, onSave, visible, onClose, userEmail }) => {
     };
 
     const handleSave = async () => {
-        // Save notification information to Firestore
         await firestore().collection('MakeAppointments').doc(id).update({ notificationTime: date.getTime() });
 
         // Schedule email to be sent at the selected time

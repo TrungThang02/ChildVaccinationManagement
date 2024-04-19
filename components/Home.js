@@ -1,12 +1,17 @@
 import 'react-native-gesture-handler'
-import React from "react";
+import React ,{useContext}from "react";
 import { View, Text, StyleSheet, Image, ScrollView, FlatList, TouchableOpacity, Alert } from 'react-native';
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Avatar, Card } from 'react-native-paper';
 import MakeAppointment from './MakeAppointment';
-
+import firestore from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth';
+import { UserContext } from '../context/UseContext';
 
 const Home = ({ navigation }) => {
+    const { userInfo } = useContext(UserContext);
+    const userEmail = userInfo?.email || '';
+    
     const data = [
         { 
             id: '1', 
@@ -43,10 +48,12 @@ const Home = ({ navigation }) => {
                 </View>
                 <View style={{ marginLeft: 10 }}>
                     <Text style={{ color: 'black' }}>Xin chào</Text>
-                    <Text style={{ color: 'black', fontSize: 15, fontWeight: '600' }}>Tran Trung Thang !</Text>
+                    <Text style={{ color: 'black', fontSize: 15, fontWeight: '600' }}>{userEmail}</Text>
                 </View>
-                <View style={{ alignItems: 'flex-end', width: 175 }}>
-                    <TouchableOpacity onPress={handlerAlert}>
+                <View style={{ alignItems: 'flex-end', width: 175}}>
+                    <TouchableOpacity 
+                    style={{marginRight:20}}
+                    onPress={handlerAlert}>
                         <Image source={{ uri: 'https://static.vecteezy.com/system/resources/previews/010/366/210/original/bell-icon-transparent-notification-free-png.png' }} height={45} width={45} />
                     </TouchableOpacity>
                 </View>

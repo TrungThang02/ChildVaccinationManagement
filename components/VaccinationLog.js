@@ -72,7 +72,7 @@ const VaccinationLog = () => {
                     </View>
                     <Divider />
                     <View style={styles.rowContainer}>
-                        <Text style={styles.label}>Ngày đặt lịch:</Text>
+                        <Text style={styles.label}>Ngày tiêm:</Text>
                         <Text>{item.vaccinationDate}</Text>
                     </View>
                 </View>
