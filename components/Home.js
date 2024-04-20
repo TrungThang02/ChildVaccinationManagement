@@ -1,42 +1,45 @@
-import 'react-native-gesture-handler'
-import React ,{useContext}from "react";
-import { View, Text, StyleSheet, Image, ScrollView, FlatList, TouchableOpacity, Alert } from 'react-native';
+import React, { useContext, useState, useEffect } from "react";
+import { View, Text, StyleSheet, Image, ScrollView, FlatList, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Avatar, Card } from 'react-native-paper';
-import MakeAppointment from './MakeAppointment';
+import { Avatar } from 'react-native-paper';
 import firestore from '@react-native-firebase/firestore';
-import auth from '@react-native-firebase/auth';
 import { UserContext } from '../context/UseContext';
-
+import { useNavigation } from '@react-navigation/native';
 const Home = ({ navigation }) => {
     const { userInfo } = useContext(UserContext);
     const userEmail = userInfo?.email || '';
-    
-    const data = [
-        { 
-            id: '1', 
-            title: 'Lịch tiêm vac-xin cho trẻ em từ 10 đến 30 tháng tuổi', 
-            image :'https://upload.wikimedia.org/wikipedia/vi/c/c3/Vaccin_cum.jpg',
-            content: 'Dưới đây là lịch tiêm chủng đầy đủ cho trẻ theo chương trình tiêm chủng mở rộng và tiêm chủng dịch vụ theo từng tháng, phụ huynh nhất định phải ghi nhớ hoặc lưu lại để đảm bảo bé được tiêm chủng vắc xin đủ mũi, đúng lịch' 
-        },
-        { 
-            id: '2', 
-            title: 'Card 1', 
-            image :'https://upload.wikimedia.org/wikipedia/vi/c/c3/Vaccin_cum.jpg',
-            content: 'Dưới đây là lịch tiêm chủng đầy đủ cho trẻ theo chương trình tiêm chủng mở rộng và tiêm chủng dịch vụ theo từng tháng, phụ huynh nhất định phải ghi nhớ hoặc lưu lại để đảm bảo bé được tiêm chủng vắc xin đủ mũi, đúng lịch' 
-        },
-        { 
-            id: '3', 
-            title: 'Card 1', 
-            image :'https://upload.wikimedia.org/wikipedia/vi/c/c3/Vaccin_cum.jpg',
-            content: 'Dưới đây là lịch tiêm chủng đầy đủ cho trẻ theo chương trình tiêm chủng mở rộng và tiêm chủng dịch vụ theo từng tháng, phụ huynh nhất định phải ghi nhớ hoặc lưu lại để đảm bảo bé được tiêm chủng vắc xin đủ mũi, đúng lịch' 
-        },
-        
-    ];
+    const [data, setData] = useState([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const newsRef = firestore().collection('news');
+                const snapshot = await newsRef.get();
+
+                const newsList = [];
+                snapshot.forEach(doc => {
+                    const { title, image, description } = doc.data();
+                    newsList.push({
+                        id: doc.id,
+                        title,
+                        image,
+                        description
+                    });
+                });
+
+                setData(newsList);
+            } catch (error) {
+                console.error('Error fetching data: ', error);
+            }
+        };
+
+        fetchData();
+    }, []);
 
     const handlerAlert = () => {
         navigation.navigate("Notification")
     }
+
     return (
         <SafeAreaView style={styles.container}>
 
@@ -142,26 +145,22 @@ const Home = ({ navigation }) => {
                     <View style={{...styles.news, padding:10, paddingBottom:0 }}>
                         <Text style={{fontWeight:'bold', color:'#333'}}>Thông tin tiêm chủng</Text>
                     </View>
-                    <View style={{ ...styles.news, marginBottom: 50 }}>
-                        <FlatList
-                            data={data}
-                            horizontal
-                            showsHorizontalScrollIndicator={false} 
-                            keyExtractor={(item) => item.id}
-                            renderItem={({ item }) => (
-                                <View style={styles.card}>
-                                    <Image 
-                                    style={{borderRadius:5}}
-                                    source ={{
-                                        uri: item.image
-                                    }}
-                                    height={100}/>
-                                    <Text style={styles.cardContent}> {item.title.split(' ').slice(0, 15).join(' ')}</Text>
-                                </View>
-                            )}
-                        />
                     </View>
-                </View>
+                    <FlatList
+                data={data}
+                horizontal
+                showsHorizontalScrollIndicator={false} 
+                keyExtractor={(item) => item.id}
+                renderItem={({ item }) => (
+                    <TouchableOpacity style={styles.card} onPress={() => navigation.navigate('NewsDetailScreen', { title: item.title, image: item.image, description: item.description })}>
+                        <Image 
+                            style={{borderRadius: 5, width: '100%', height: 100}}
+                            source={{ uri: item.image }}
+                        />
+                        <Text style={styles.cardContent}>{item.title.split(' ').slice(0, 15).join(' ')}</Text>
+                    </TouchableOpacity>
+                )}
+            />
             </ScrollView>
         </SafeAreaView>
     )
@@ -170,13 +169,10 @@ const Home = ({ navigation }) => {
 const styles = StyleSheet.create({
     container: {
         backgroundColor: '#f3f3f3'
-
     },
     header: {
         padding: 15,
         flexDirection: 'row',
-
-
     },
     control: {
         height: 150,
@@ -187,9 +183,7 @@ const styles = StyleSheet.create({
         padding: 10,
         alignItems: 'center',
         justifyContent:'center',
-
         borderRadius: 15,
-
     },
     banner: {
         padding: 10,
@@ -198,9 +192,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-evenly',
         margin: 0
-
-
-
     },
     imagebanner:{
         width: 50,
@@ -214,31 +205,21 @@ const styles = StyleSheet.create({
         flexWrap: 'wrap',
         fontSize: 15
     },
-
-
-
     card: {
         width: 180, 
         margin: 10,
-        marginBottom:100,
+        marginBottom: 100,
         backgroundColor: '#fff',
         borderRadius: 15,
         height: 180,
         overflow: 'hidden',
         objectFit: 'cover',
-       
-    },
-    cardTitle: {
-        fontSize: 18,
-        fontWeight: 'bold',
     },
     cardContent: {
-       
         fontSize: 14,
-        padding:10,
-        color:'#333',
-     
-       
+        padding: 10,
+        color: '#333',
     },
-})
+});
+
 export default Home;

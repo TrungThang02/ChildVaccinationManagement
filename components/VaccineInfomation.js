@@ -1,42 +1,69 @@
-import React from 'react';
+// VaccineDetails.js
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Text, FlatList, SafeAreaView, TouchableOpacity, Image } from 'react-native';
-import { Searchbar, Appbar } from 'react-native-paper';
-
-const DATA = [
-    {
-        id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-        title: 'Sản phầm này không phải là thuốc,Sản phầm này không phải là thuốc Sản phầm này không phải là thuốc',
-        content: 'Sản phầm này không phải là thuốc',
-        image: 'https://upload.wikimedia.org/wikipedia/vi/c/c3/Vaccin_cum.jpg',
-    },
-    {
-        id: 'bd7acbea',
-        title: 'Binh Duong',
-        content: 'Sản phầm này không phải là thuốc',
-        image: 'https://upload.wikimedia.org/wikipedia/vi/c/c3/Vaccin_cum.jpg',
-    },
-
-];
-const Details = () => {
-    console.log(1);
-}
-
-const Item = ({ title, image }) => (
-    <TouchableOpacity onPress={Details} style={styles.item}>
-      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-      <Image source={{ uri: image }} style={styles.image} />
-        <View style={{ marginLeft: 10 , width:200}}>
-          <Text style={styles.title}>{title.split(' ').slice(0, 15).join(' ')}</Text>
-        
-        </View>
-      </View>
-    </TouchableOpacity>
-  );
-  
+import { Searchbar } from 'react-native-paper';
+import { useNavigation } from '@react-navigation/native';
+import firestore from '@react-native-firebase/firestore';
 
 const VaccineDetails = () => {
-    const [searchQuery, setSearchQuery] = React.useState('');
-    const onChangeSearch = query => setSearchQuery(query);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [newsData, setNewsData] = useState([]);
+    const [filteredData, setFilteredData] = useState([]);
+    const navigation = useNavigation();
+
+    const removeDiacritics = (str) => {
+        return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    };
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const newsRef = firestore().collection('news');
+                const snapshot = await newsRef.get();
+
+                const newsList = [];
+                snapshot.forEach(doc => {
+                    const { title, image, description } = doc.data();
+                    newsList.push({
+                        id: doc.id,
+                        title,
+                        image,
+                        description
+                    });
+                });
+
+                setNewsData(newsList);
+                setFilteredData(newsList);
+            } catch (error) {
+                console.error('Error fetching data: ', error);
+            }
+        };
+
+        fetchData();
+    }, []);
+
+    useEffect(() => {
+        const filteredNewsData = newsData.filter(item =>
+            removeDiacritics(item.title.toLowerCase()).includes(removeDiacritics(searchQuery.toLowerCase()))
+        );
+        setFilteredData(filteredNewsData);
+    }, [searchQuery, newsData]);
+
+    const Item = ({ title, image, description }) => (
+        <TouchableOpacity onPress={() => navigateToDetails(title, image, description)} style={styles.item}>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Image source={{ uri: image }} style={styles.image} />
+                <View style={{ marginLeft: 10, width: 200 }}>
+                    <Text style={styles.title}>{title}</Text>
+                </View>
+            </View>
+        </TouchableOpacity>
+    );
+
+    const navigateToDetails = (title, image, description) => {
+        navigation.navigate('NewsDetailScreen', { title, image, description });
+    };
+
     return (
         <View style={{ backgroundColor: '#fff', flex: 1 }}>
             <View style={{ padding: 10, alignItems: 'center', backgroundColor: '#87A7FF' }}>
@@ -51,24 +78,23 @@ const VaccineDetails = () => {
                         borderRadius: 10
                     }}
                     placeholder="Tìm kiếm thông tin..."
-                    onChangeText={onChangeSearch}
+                    onChangeText={setSearchQuery}
                     value={searchQuery}
                 />
             </View>
             <SafeAreaView>
                 <FlatList
                     style={{ marginBottom: 200 }}
-                    data={DATA}
+                    data={filteredData}
                     renderItem={({ item }) => (
-                        <Item title={item.title} name={item.name} image={item.image} />
+                        <Item title={item.title} image={item.image} description={item.description} />
                     )}
                     keyExtractor={item => item.id}
                 />
             </SafeAreaView>
         </View>
     );
-}
-
+};
 
 const styles = StyleSheet.create({
     container: {
@@ -76,7 +102,6 @@ const styles = StyleSheet.create({
     },
     item: {
         backgroundColor: 'white',
-       
         marginVertical: 8,
         marginHorizontal: 16,
         borderRadius: 10,
@@ -85,35 +110,11 @@ const styles = StyleSheet.create({
         shadowColor: 'black',
         shadowOpacity: 0.2,
         shadowRadius: 5,
-
-
     },
     title: {
         fontSize: 16,
-       marginRight:10,
-       textAlign:'left',
-    },
-    name: {
-        fontSize: 14,
-        color: '#888',
-    },
-    buttonContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginTop: 15,
-    },
-    button: {
-        padding: 10,
-        backgroundColor: 'transparent',
-        borderRadius: 20,
-        width: '45%',
-        borderWidth: 1,
-        borderColor: '#87A7FF',
-        alignItems: 'center',
-    },
-    buttonText: {
-        color: 'black',
+        marginRight: 10,
+        textAlign: 'left',
     },
     search: {
         padding: 15,
@@ -122,10 +123,9 @@ const styles = StyleSheet.create({
     image: {
         width: 150,
         height: 100,
-       borderRadius:10,
-       borderTopRightRadius:0,
-       borderBottomRightRadius:0,
-
+        borderRadius: 10,
+        borderTopRightRadius: 0,
+        borderBottomRightRadius: 0,
     },
 });
 

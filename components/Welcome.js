@@ -14,10 +14,10 @@ const Welcome = ({ navigation }) => {
         <View style={styles.container}>
             <View style={styles.logoview}>
                 <View>
-                    <Image source={require('../assets/images/logo.png')} style={styles.logo} />
+                    <Image source={require('../assets/images/logo12.jpg')} style={styles.logo} />
                 </View>
-                <Text style={{ ...styles.title, color: 'blue' }}>ỨNG DỤNG</Text>
-                <Text style={{ ...styles.title, color: 'blue', fontWeight: 'bold' }}>QUẢN LÝ TIÊM CHỦNG TRẺ EM</Text>
+                {/* <Text style={{ ...styles.title, color: 'blue' }}>ỨNG DỤNG</Text>
+                <Text style={{ ...styles.title, color: 'blue', fontWeight: 'bold' }}>QUẢN LÝ TIÊM CHỦNG TRẺ EM</Text> */}
             </View>
             <View>
             </View>

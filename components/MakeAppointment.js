@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { View, StyleSheet, Text, TouchableOpacity, FlatList, SafeAreaView, Modal, TouchableHighlight, Platform } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity, FlatList, SafeAreaView, Modal, TouchableHighlight, Platform, Alert } from 'react-native';
 import { Searchbar } from 'react-native-paper';
 import firestore from '@react-native-firebase/firestore';
 import { UserContext } from '../context/UseContext';
@@ -14,6 +14,8 @@ const MakeAppointment = () => {
     const [patientRecords, setPatientRecords] = useState([]);
     const [selectedAppointment, setSelectedAppointment] = useState(null);
     const [modalVisible, setModalVisible] = useState(false);
+    const [filteredAppointments, setFilteredAppointments] = useState([]);
+
     const [vaccineInfo, setVaccineInfo] = useState({
         vaccineName: '',
         vaccinationTime: '',
@@ -21,7 +23,14 @@ const MakeAppointment = () => {
         selectedDate: new Date(),
     });
     const [datePickerVisible, setDatePickerVisible] = useState(false);
+    useEffect(() => {
+        const filtered = appointmentData.filter(item => {
+            return item.Name.toLowerCase().includes(searchQuery.toLowerCase());
+        });
+        setFilteredAppointments(filtered);
+    }, [searchQuery, appointmentData]);
 
+    
     useEffect(() => {
         const unsubscribe = firestore().collection('appointment').onSnapshot(snapshot => {
             const appointments = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -85,7 +94,7 @@ const MakeAppointment = () => {
             // Gửi email
             sendAppointmentEmail();
             setModalVisible(false);
-            alert('Đặt lịch thành công!');
+           Alert.alert('Thông báo','Đặt lịch thành công!');
         })
         .catch(error => {
             console.error('Error adding document: ', error);
@@ -263,7 +272,7 @@ const MakeAppointment = () => {
             </View>
             <SafeAreaView style={styles.listContainer}>
                 <FlatList
-                    data={appointmentData}
+                     data={filteredAppointments}
                     renderItem={renderItem}
                     keyExtractor={item => item.id}
                 />
@@ -285,7 +294,7 @@ const MakeAppointment = () => {
                             keyExtractor={item => item.id}
                         />
                         <TouchableOpacity
-                            style={{ ...styles.openButton, backgroundColor: '#2196F3' }}
+                            style={{ ...styles.openButton, backgroundColor: '#87A7FF' }}
                             onPress={() => setDatePickerVisible(true)}
                         >
                             <Text style={styles.textStyle}>Chọn ngày</Text>
@@ -296,13 +305,13 @@ const MakeAppointment = () => {
                         </Text>
                         
                         <TouchableHighlight
-                            style={{ ...styles.openButton, backgroundColor: '#2196F3' }}
+                            style={{ ...styles.openButton, backgroundColor: '#87A7FF' }}
                             onPress={handleConfirmAppointment}
                         >
                             <Text style={styles.textStyle}>Xác nhận đặt lịch</Text>
                         </TouchableHighlight>
                         <TouchableHighlight
-                            style={{ ...styles.openButton, backgroundColor: '#2196F3' }}
+                            style={{ ...styles.openButton, backgroundColor: '#87A7FF' }}
                             onPress={() => {
                                 setModalVisible(!modalVisible);
                             }}

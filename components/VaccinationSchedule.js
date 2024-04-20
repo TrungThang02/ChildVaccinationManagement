@@ -27,9 +27,8 @@ const VaccinationSchedule = () => {
                 {calendarData.map((item, index) => (
                     <TouchableOpacity key={index} onPress={() => handleItemClick(item)}>
                        <View style={styles.itemContainer}>
-    <Text>{item.Time.toString()}</Text>
-</View>
-
+                           <Text>{item.Time.toString()}</Text>
+                       </View>
                     </TouchableOpacity>
                 ))}
             </View>

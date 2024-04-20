@@ -18,6 +18,7 @@ import VaccinationSchedule from '../components/VaccinationSchedule';
 import VaccineList from '../components/VaccineList';
 import Update from '../components/VaccineRecordController/Update';
 import ImageDetail from '../components/ImageDetail';
+import NewsDetailScreen from '../components/NewsDetailScreen';
 const Stack = createStackNavigator();
 
 const Router = ({ navigation }) => {
@@ -41,7 +42,8 @@ const Router = ({ navigation }) => {
       <Stack.Screen name="VaccinationSchedule" component={VaccinationSchedule} options={{ title: 'Lịch tiêm chủng cho trẻ em' }} />
       <Stack.Screen name="VaccineList" component={VaccineList}  options={{ title: 'Danh sách Vắc xin' }}/>
       <Stack.Screen name="Update" component={Update} options={{ title: 'Cập nhật hồ sơ tiêm chủng' }} />
-      <Stack.Screen name="ImageDetail" component={ImageDetail}  />
+      <Stack.Screen name="ImageDetail" component={ImageDetail} options={{ title: 'Chi tiết lịch' }} />
+      <Stack.Screen name="NewsDetailScreen" component={NewsDetailScreen } options={{ title: 'Chi tiết' }} />
       
     </Stack.Navigator>
 

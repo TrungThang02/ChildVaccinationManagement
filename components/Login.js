@@ -141,7 +141,7 @@ const Login = ({ navigation }) => {
                         borderRadius: 8,
                         padding: 10,
                         marginTop: 18,
-                        marginBottom: 4,
+                        marginBottom: 0,
                         alignItems: 'center',
                         fontWeight: 'bold',
                         backgroundColor : 'blue'
@@ -150,25 +150,25 @@ const Login = ({ navigation }) => {
 
                 <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 20 }}>
                     <View
-                        style={{
-                            flex: 1,
-                            height: 1,
-                            backgroundColor: COLORS.grey,
-                            marginHorizontal: 10
-                        }}
+                        // style={{
+                        //     flex: 1,
+                        //     height: 1,
+                        //     backgroundColor: COLORS.grey,
+                        //     marginHorizontal: 10
+                        // }}
                     />
-                    <Text style={{ fontSize: 14 }}>Hoặc đăng nhập với</Text>
+                    {/* <Text style={{ fontSize: 14 }}>Hoặc đăng nhập với</Text> */}
                     <View
-                        style={{
-                            flex: 1,
-                            height: 1,
-                            backgroundColor: COLORS.grey,
-                            marginHorizontal: 10
-                        }}
+                        // style={{
+                        //     flex: 1,
+                        //     height: 1,
+                        //     backgroundColor: COLORS.grey,
+                        //     marginHorizontal: 10
+                        // }}
                     />
                 </View>
 
-                <View style={{
+                {/* <View style={{
                     flexDirection: 'row',
                     justifyContent: 'center'
                 }}>
@@ -224,12 +224,12 @@ const Login = ({ navigation }) => {
                         />
                         <Text>Google</Text>
                     </TouchableOpacity>
-                </View>
+                </View> */}
 
                 <View style={{
                     flexDirection: "row",
                     justifyContent: "center",
-                    marginVertical: 22
+                    marginVertical: 1
                 }}>
                     <Text style={{ fontSize: 16, color: COLORS.black }}>Chưa có tài khoản ?</Text>
                     <Pressable
@@ -242,7 +242,19 @@ const Login = ({ navigation }) => {
                             marginLeft: 6
                         }}>Đăng ký ngay</Text>
                     </Pressable>
+                    
                 </View>
+                <Pressable
+                        onPress={() => navigation.navigate("SignUp")}
+                    >
+                        <Text style={{
+                            textAlign: "center",
+                            fontSize: 16,
+                            color:'blue',
+                            fontWeight: "bold",
+                            marginLeft: 6
+                        }}>Quên mật khẩu</Text>
+                    </Pressable>
             </View>
         </SafeAreaView>
     )
