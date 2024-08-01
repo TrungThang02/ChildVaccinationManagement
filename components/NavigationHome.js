@@ -10,7 +10,7 @@ import FontAwesome5  from 'react-native-vector-icons/FontAwesome5';
 import AntDesign from 'react-native-vector-icons/AntDesign'
 // import { createDrawerNavigator } from '@react-navigation/drawer';
 
-//import { useDrawerStatus } from '@react-navigation/drawer';
+
 
 import Login from '../components/Login';
 import SignUp from '../components/SignUp';
