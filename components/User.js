@@ -32,9 +32,9 @@ const User = ({ navigation }) => {
         // navigation.navigate('Info', { userId: user ? user.uid : null });
     };
 
-    const handleEdit = () => {
-        navigation.navigate('ChangeInfo');
-    };
+    // const handleEdit = () => {
+    //     navigation.navigate('ChangeInfo');
+    // };
 
     const handleReset = () => {
         // if (userInfo.email) {
@@ -137,11 +137,11 @@ const User = ({ navigation }) => {
          
                     </Pressable>
                     <Pressable
-                        onPress={handleEdit}
+                         onPress={ ()=> navigation.navigate("VaccinationLog") }  
                         style={styles.button}
                     > 
                     <TouchableOpacity 
-                    onPress={ ()=> navigation.navigate("VaccinationLog")}
+                    onPress={ ()=> navigation.navigate("VaccinationLog") }  
                     style={{flexDirection:'row'}}>
                     <Text style={{ marginRight:10}}><Entypo name='back-in-time' size={26} style={{ color: "black" , margin:20}} /></Text>
                     <Text style={styles.textbutton}>Lịch sử tiêm</Text>
@@ -158,7 +158,7 @@ const User = ({ navigation }) => {
                     </View>
          
                     </Pressable> */}
-                    <Pressable
+                    {/* <Pressable
                         onPress={handleEdit}
                         style={styles.button}
                     > 
@@ -167,9 +167,9 @@ const User = ({ navigation }) => {
                     <Text style={styles.textbutton}>Giới thiệu</Text>
                     </View>
          
-                    </Pressable>
+                    </Pressable> */}
                 </View>
-                <Pressable
+                {/* <Pressable
                         onPress={handleEdit}
                         style={styles.button}
                     > 
@@ -178,7 +178,7 @@ const User = ({ navigation }) => {
                     <Text style={styles.textbutton}>Cài đặt</Text>
                     </View>
          
-                    </Pressable>
+                    </Pressable> */}
             </View>
         </View>
     );

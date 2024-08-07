@@ -19,7 +19,7 @@ app.post('/send-email', (req, res) => {
     });
 
     const mailOptions = {
-        from: 'Hệ thống Quản lý Tiêm Chủng', 
+        from: '"Hệ thống Quản lý Tiêm Chủng" <trantrungthang01699516993@gmail.com>', 
         to: recipient,
         subject: subject,
         html: html
